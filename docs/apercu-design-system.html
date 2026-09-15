@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diao Shop — Aperçu du design system (Phase 3)</title>
+<style>
+  /* ============ BASE (aperçu statique — polices système ; le site réel utilisera Outfit auto-hébergée) ============ */
+  :root{
+    --page:#0E1016; --panel:#161922; --panel2:#1B1F2B; --line:#262B38;
+    --txt:#E8EAF0; --muted:#9AA1B2; --gold:#F0A62B;
+    --ok:#3DD68C; --err:#FF5C5C; --info:#5CA8FF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--page);color:var(--txt);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.6;padding:40px 20px 80px}
+  .wrap{max-width:1100px;margin:0 auto}
+  h1{font-size:30px;letter-spacing:-.02em}
+  h2{font-size:21px;margin:56px 0 8px;letter-spacing:-.01em;color:var(--gold)}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+  .note{background:#1A1E2A;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:12px;padding:14px 18px;font-size:13.5px;color:var(--muted);margin:16px 0}
+  .note b{color:var(--txt)}
+  .demo-tag{display:inline-block;background:#3A2A08;color:#FFD48A;border:1px solid #6B4A10;font-size:11px;font-weight:600;border-radius:999px;padding:2px 10px;letter-spacing:.04em;vertical-align:middle}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .grid{display:grid;gap:14px}
+  .lbl{font-size:12px;color:var(--muted);margin:0 0 6px}
+  code{background:#0A0C12;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12px;color:#C9D2E8}
+
+  /* ============ TOKENS STRUCTURELS ============ */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .sw{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .sw .c{height:52px}
+  .sw .t{padding:8px 10px;font-size:11.5px;color:var(--muted)}
+  .sw .t b{display:block;color:var(--txt);font-size:12.5px}
+  .type-row{display:flex;align-items:baseline;gap:16px;padding:10px 0;border-bottom:1px dashed var(--line)}
+  .type-row:last-child{border-bottom:0}
+  .type-row .meta{font-size:11.5px;color:var(--muted);min-width:210px}
+  .spacing-row{display:flex;align-items:center;gap:12px;margin:6px 0}
+  .spacing-row .bar{height:10px;background:linear-gradient(90deg,#F0A62B,#C97F12);border-radius:3px}
+  .spacing-row .m{font-size:11.5px;color:var(--muted);min-width:120px}
+  .radii{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+  .rad{background:var(--panel2);border:1px solid var(--line);width:96px;height:64px}
+  .rad.m{width:60px;text-align:center}
+  .shadow-box{width:150px;height:80px;border-radius:14px;background:#1E2230;display:inline-flex;align-items:center;justify-content:center;margin-right:22px;font-size:11px;color:var(--muted)}
+
+  /* ============ BOUTONS & ÉTATS ============ */
+  .btn-row{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  .cta{display:inline-flex;align-items:center;gap:12px;height:56px;padding:0 28px;border-radius:999px;border:0;cursor:pointer;
+       background:#F0A62B;color:#1C0E02;font-weight:700;font-size:15px;box-shadow:0 10px 28px -8px rgba(240,166,43,.55);
+       transition:transform .15s,filter .15s}
+  .cta:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .cta:active{transform:scale(.985)}
+  .cta.focus{outline:2px solid #F5B62E;outline-offset:3px}
+  .cta.disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+  .icon-btn{width:44px;height:44px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--txt);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+  .icon-btn .badge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:999px;background:var(--gold);color:#1C0E02;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+  .spinner{width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(28,14,2,.25);border-top-color:#1C0E02;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .field{max-width:340px}
+  .field input{width:100%;height:48px;border-radius:14px;border:1px solid var(--line);background:#12141C;color:var(--txt);padding:0 16px;font-size:15px;outline:none}
+  .field input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(240,166,43,.25)}
+  .field.error input{border-color:var(--err);box-shadow:0 0 0 2px rgba(255,92,92,.2)}
+  .field .msg{font-size:12.5px;margin-top:6px;color:var(--muted)}
+  .field.error .msg{color:var(--err)}
+  .toast{display:flex;align-items:center;gap:12px;background:#10231B;border:1px solid rgba(61,214,140,.4);color:#C9F2DF;border-radius:12px;padding:12px 16px;font-size:14px;max-width:420px}
+  .skeleton{max-width:340px}
+  .sk{height:14px;border-radius:7px;background:rgba(255,255,255,.08);background-image:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);background-size:200% 100%;animation:sh 1.4s infinite;margin-bottom:10px}
+  .sk.w60{width:60%}.sk.w40{width:40%}
+  @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  @media (prefers-reduced-motion: reduce){.sk{animation:none}.spinner{animation-duration:2s}}
+
+  /* ============ CARTES ============ */
+  .cards-demo{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+  .pcard{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:24px;padding:16px;text-align:center;transition:transform .2s}
+  .pcard:hover{transform:translateY(-4px)}
+  .pcard .img{background:#12141C;border-radius:14px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
+  .pcard .nm{font-weight:700;font-size:14.5px;margin-top:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pcard .tm{font-size:11.5px;color:var(--muted)}
+  .pcard .pr{font-weight:800;color:var(--gold);margin-top:4px;font-variant-numeric:tabular-nums}
+  .pcard.oos .img svg{filter:grayscale(.8);opacity:.75}
+  .oos-badge{display:inline-block;background:rgba(255,92,92,.15);color:var(--err);border:1px solid rgba(255,92,92,.4);font-size:11px;font-weight:700;border-radius:999px;padding:2px 10px;margin-top:8px}
+  .thumbs{display:flex;gap:12px;align-items:flex-end}
+  .thumb{width:72px;height:84px;border-radius:18px;border:2px solid transparent;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+  .thumb.active{border-color:var(--gold)}
+  .thumb.active::after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:26px;height:3px;border-radius:2px;background:var(--gold)}
+
+  /* ============ SPÉCIMENS DE THÈME (moteur --ds-*) ============ */
+  .spec{margin:26px 0 8px}
+  .spec h3{font-size:15px;margin-bottom:4px;color:var(--txt)}
+  .spec .mode{font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+  .sp-outer{border-radius:22px;padding:26px;margin-top:12px;overflow:hidden;background:var(--ds-bg);position:relative}
+  .sp-outer::before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% 115%,rgba(255,255,255,.07) 0deg 7deg,transparent 7deg 15deg);pointer-events:none}
+  .sp-card{position:relative;border-radius:32px;border:1px solid var(--ds-border);background:var(--ds-gradient);padding:22px 26px;box-shadow:0 30px 70px -25px rgba(0,0,0,.55);transition:background .4s,border-color .4s}
+  .sp-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+  .sp-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:17px;color:var(--ds-text)}
+  .sp-logo svg{width:20px;height:20px;fill:var(--ds-accent)}
+  .sp-logo b{color:var(--ds-accent)}
+  .sp-nav{font-size:12px;color:var(--ds-muted)}
+  .sp-nav b{color:var(--ds-text);border-bottom:2px solid var(--ds-accent);padding-bottom:2px}
+  .sp-body{display:grid;grid-template-columns:1.1fr 1fr .9fr;gap:20px;align-items:center;margin:14px 0}
+  .sp-label{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ds-text)}
+  .sp-label i{width:8px;height:8px;border-radius:50%;background:var(--ds-accent)}
+  .sp-title{font-size:26px;font-weight:800;line-height:1.1;letter-spacing:-.02em;color:var(--ds-text);margin:8px 0}
+  .sp-title b{color:var(--ds-accent)}
+  .sp-desc{font-size:12.5px;color:var(--ds-muted);max-width:300px;margin-bottom:14px}
+  .sp-cta{display:inline-flex;align-items:center;gap:10px;height:46px;padding:0 22px;border-radius:999px;border:0;cursor:pointer;background:var(--ds-button);color:var(--ds-btn-text);font-weight:700;font-size:13px;box-shadow:0 10px 26px -8px var(--ds-glow)}
+  .sp-stage{position:relative;display:flex;align-items:center;justify-content:center;min-height:150px}
+  .sp-glow{position:absolute;width:75%;height:70%;top:12%;border-radius:50%;background:radial-gradient(closest-side,var(--ds-glow),transparent 72%);opacity:calc(var(--ds-glow-intensity)*.55);filter:blur(18px)}
+  .sp-stage svg.jersey{position:relative;width:105px;height:105px;filter:drop-shadow(0 16px 14px rgba(0,0,0,.45))}
+  .sp-price{font-size:26px;font-weight:800;color:var(--ds-text);font-variant-numeric:tabular-nums}
+  .sp-old{font-size:14px;color:var(--ds-muted);text-decoration:line-through;margin-left:8px;font-weight:500}
+  .sp-sizes{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .sz{min-width:34px;height:34px;border-radius:999px;border:1.5px solid var(--ds-border);color:var(--ds-text);font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;padding:0 8px}
+  .sz.on{background:var(--ds-accent);border-color:var(--ds-accent);color:var(--ds-btn-accent-text)}
+  .sp-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--ds-border);padding-top:14px}
+  .sp-soc{display:flex;gap:10px}
+  .sp-soc i{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ds-muted);opacity:.75;display:inline-block}
+  .sp-slogan{font-size:12px;color:var(--ds-muted)}
+  .sp-thumbs{display:flex;gap:8px}
+  .sp-thumbs .t{width:38px;height:44px;border-radius:10px;border:2px solid transparent;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center}
+  .sp-thumbs .t.on{border-color:var(--ds-accent)}
+  .sp-vars{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.9}
+  @media (max-width:860px){.sp-body{grid-template-columns:1fr;text-align:left}.sp-stage{min-height:120px}}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Diao Shop — Aperçu du design system</h1>
+  <p class="sub">Phase 3 · 15 septembre 2026 · Aperçu <b>statique</b> pour validation — la page d'accueil réelle est le livrable de la Phase 4. Polices : pile système ici, <b>Outfit auto-hébergée</b> sur le site réel. <span class="demo-tag">DONNÉES DE DÉMONSTRATION À REMPLACER</span></p>
+
+  <div class="note"><b>Moteur de thèmes :</b> chaque spécimen ci-dessous applique exactement les 12 variables <code>--ds-*</code> définies dans <code>PHASE_3_DESIGN_SYSTEM.md</code>. Sur le site réel, ces variables proviennent de la table <code>product_themes</code> (back-office) et transitent en 400 ms sans rechargement.</div>
+
+  <!-- ================= TOKENS STRUCTURELS ================= -->
+  <h2>1. Couleurs structurelles (invariables)</h2>
+  <p class="sub">Utilitaires non thématiques + thème de secours.</p>
+  <div class="card swatches">
+    <div class="sw"><div class="c" style="background:#F0A62B"></div><div class="t"><b>brand-gold</b>#F0A62B</div></div>
+    <div class="sw"><div class="c" style="background:#3DD68C"></div><div class="t"><b>success</b>#3DD68C</div></div>
+    <div class="sw"><div class="c" style="background:#FF5C5C"></div><div class="t"><b>danger</b>#FF5C5C</div></div>
+    <div class="sw"><div class="c" style="background:#5CA8FF"></div><div class="t"><b>info</b>#5CA8FF</div></div>
+    <div class="sw"><div class="c" style="background:linear-gradient(135deg,#F0A62B,#3D1F05)"></div><div class="t"><b>secours</b>neutre or/sombre</div></div>
+  </div>
+
+  <h2>2. Typographie — Outfit (échelle)</h2>
+  <p class="sub">Prix en chiffres tabulaires · titres en -0.02em · ligne 2 du titre produit en couleur accent.</p>
+  <div class="card">
+    <div class="type-row"><span class="meta">ds-display · 56/34 · 800</span><span style="font-size:44px;font-weight:800;letter-spacing:-.02em">Maillot RDC</span></div>
+    <div class="type-row"><span class="meta">ds-h1 · 44/30 · 800</span><span style="font-size:33px;font-weight:800;letter-spacing:-.02em">Tous les maillots</span></div>
+    <div class="type-row"><span class="meta">ds-h2 · 32/24 · 700</span><span style="font-size:25px;font-weight:700">À propos de la boutique</span></div>
+    <div class="type-row"><span class="meta">ds-price · 48/34 · 800 · tabular</span><span style="font-size:37px;font-weight:800;font-variant-numeric:tabular-nums">25 000 FCFA</span></div>
+    <div class="type-row"><span class="meta">ds-body-lg · 18 · 400</span><span style="font-size:17px;max-width:560px">Affichez votre fierté avec ce maillot unique. Un design puissant et une qualité premium.</span></div>
+    <div class="type-row"><span class="meta">ds-sm · 14 · 500</span><span style="font-size:13.5px;color:var(--muted)">Choisir sa taille</span></div>
+    <div class="type-row"><span class="meta">ds-xs · 12 · 500</span><span style="font-size:11.5px;color:var(--muted)">MAILLOTS DE FOOTBALL</span></div>
+  </div>
+
+  <h2>3. Espacements &amp; rayons</h2>
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <div class="card">
+      <p class="lbl">Base 4 px — tokens ds-1 → ds-24</p>
+      <div class="spacing-row"><span class="m">ds-1 · 4</span><div class="bar" style="width:4px"></div></div>
+      <div class="spacing-row"><span class="m">ds-3 · 12</span><div class="bar" style="width:12px"></div></div>
+      <div class="spacing-row"><span class="m">ds-6 · 24</span><div class="bar" style="width:24px"></div></div>
+      <div class="spacing-row"><span class="m">ds-12 · 48 (padding carte)</span><div class="bar" style="width:48px"></div></div>
+      <div class="spacing-row"><span class="m">ds-24 · 96</span><div class="bar" style="width:96px"></div></div>
+    </div>
+    <div class="card">
+      <p class="lbl">Rayons</p>
+      <div class="radii">
+        <div style="text-align:center"><div class="rad" style="border-radius:32px"></div><p class="lbl">r-card 48/28</p></div>
+        <div style="text-align:center"><div class="rad" style="border-radius:24px"></div><p class="lbl">r-panel 24</p></div>
+        <div style="text-align:center"><div class="rad" style="border-radius:18px"></div><p class="lbl">r-thumb 18</p></div>
+        <div style="text-align:center"><div class="rad" style="border-radius:14px"></div><p class="lbl">r-input 14</p></div>
+        <div style="text-align:center"><div class="rad" style="border-radius:999px"></div><p class="lbl">r-pill 999</p></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>4. Ombres &amp; effets lumineux</h2>
+  <div class="card" style="padding:34px 22px">
+    <div class="shadow-box" style="box-shadow:0 40px 90px -30px rgba(0,0,0,.75),0 18px 40px -20px rgba(0,0,0,.5)">ds-shadow-card</div>
+    <div class="shadow-box" style="box-shadow:0 10px 28px -8px rgba(240,166,43,.55)">ds-shadow-cta</div>
+    <div class="shadow-box" style="box-shadow:0 0 55px 2px rgba(240,166,43,.35)">ds-glow (0.4)</div>
+  </div>
+
+  <!-- ================= BOUTONS / CHAMPS / ÉTATS ================= -->
+  <h2>5. Boutons, champs et états obligatoires</h2>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+    <div class="card">
+      <p class="lbl">CTA principal + icônes + états (survolez-les)</p>
+      <div class="btn-row" style="margin-bottom:14px">
+        <button class="cta">🛒&nbsp; Ajouter au panier &nbsp;→</button>
+      </div>
+      <div class="btn-row" style="margin-bottom:14px">
+        <button class="cta focus">Focus visible</button>
+        <button class="cta disabled">Désactivé</button>
+        <button class="cta"><span class="spinner"></span>&nbsp;Ajout…</button>
+      </div>
+      <div class="btn-row">
+        <button class="icon-btn">🔍</button>
+        <button class="icon-btn">♡</button>
+        <button class="icon-btn">🛒<span class="badge">2</span></button>
+        <button class="icon-btn">‹</button>
+        <button class="icon-btn">›</button>
+      </div>
+    </div>
+    <div class="card">
+      <p class="lbl">Champs</p>
+      <div class="field" style="margin-bottom:14px">
+        <p class="lbl">Nom complet</p>
+        <input type="text" placeholder="Ex. : Awa Traoré">
+        <p class="msg">Merci d'indiquer votre nom complet.</p>
+      </div>
+      <div class="field error">
+        <p class="lbl">Téléphone</p>
+        <input type="text" value="70">
+        <p class="msg">Numéro invalide — exemple : 70 12 34 56.</p>
+      </div>
+    </div>
+    <div class="card">
+      <p class="lbl">Squelette de chargement</p>
+      <div class="skeleton" style="margin-bottom:18px">
+        <div class="sk w40"></div><div class="sk"></div><div class="sk w60"></div>
+      </div>
+      <p class="lbl">Succès (toast, aria-live)</p>
+      <div class="toast">✓ Maillot ajouté au panier (taille M).</div>
+    </div>
+  </div>
+
+  <h2>6. Cartes produit &amp; miniatures (état « Épuisé » inclus)</h2>
+  <div class="grid" style="grid-template-columns:1fr">
+    <div class="card">
+      <div class="cards-demo" style="margin-bottom:22px">
+        <div class="pcard">
+          <div class="img"><svg width="74" height="74" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#3B82F6" opacity=".9"/></svg></div>
+          <div class="nm">Maillot RDC Lion</div><div class="tm">Sélection · 2026</div><div class="pr">25 000 FCFA</div>
+        </div>
+        <div class="pcard oos">
+          <div class="img"><svg width="74" height="74" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#8B36D9" opacity=".9"/></svg></div>
+          <div class="nm">Maillot Arsenal</div><div class="tm">Club · 2025</div><div class="pr">25 000 FCFA</div>
+          <span class="oos-badge">Épuisé</span>
+        </div>
+      </div>
+      <p class="lbl">Miniatures — 72×84 · active : bordure accent + indicateur</p>
+      <div class="thumbs">
+        <div class="thumb"><svg width="40" height="40" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#E8EAFF"/></svg></div>
+        <div class="thumb active"><svg width="40" height="40" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#4FA3E8"/></svg></div>
+        <div class="thumb"><svg width="40" height="40" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#D944C8"/></svg></div>
+        <div class="thumb"><svg width="40" height="40" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#7EC8F0"/></svg></div>
+        <div class="thumb"><svg width="40" height="40" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#E5322B"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SPÉCIMENS DE THÈME ================= -->
+  <h2>7. Les 7 spécimens de thème (6 produits + secours)</h2>
+  <p class="sub">Chaque spécimen = les variables d'un futur produit. Silhouettes neutres : les vraies photos seront téléversées par l'administrateur (PNG détourés recommandés). <span class="demo-tag">DONNÉES DE DÉMONSTRATION À REMPLACER</span></p>
+
+  <!-- T1 RDC -->
+  <div class="spec">
+    <h3>T1 · Maillot RDC — Édition Lion 2026 <span class="demo-tag">mis en avant</span></h3>
+    <p class="mode">orange / or · mode sombre</p>
+    <div class="sp-outer th" style="--ds-bg:#F59200;--ds-gradient:linear-gradient(135deg,#3D1F05 0%,#1C0E02 55%,#4A2708 100%);--ds-primary:#EFA32B;--ds-secondary:#8A4A0D;--ds-accent:#F5B62E;--ds-text:#FFFFFF;--ds-muted:#F2D9B3;--ds-button:#F0A62B;--ds-btn-text:#1C0E02;--ds-btn-accent-text:#1C0E02;--ds-glow:#FFA424;--ds-glow-intensity:.6;--ds-border:rgba(255,164,36,.4)">
+      <div class="sp-card">
+        <div class="sp-head">
+          <span class="sp-logo"><svg viewBox="0 0 24 24"><path d="M3 8l4 4 5-7 5 7 4-4-1.5 10h-15z"/></svg>Diao <b>shop</b></span>
+          <span class="sp-nav"><b>Boutique</b> &nbsp;·&nbsp; À propos &nbsp;·&nbsp; Contact</span>
+        </div>
+        <div class="sp-body">
+          <div>
+            <span class="sp-label"><i></i>Maillots de football</span>
+            <div class="sp-title">Maillot RDC<br><b>Édition Lion. 2026</b></div>
+            <p class="sp-desc">Description de démonstration — le texte réel est rédigé dans le back-office par l'administrateur.</p>
+            <button class="sp-cta">Ajouter au panier →</button>
+          </div>
+          <div class="sp-stage"><div class="sp-glow"></div>
+            <svg class="jersey" viewBox="0 0 100 100"><defs><linearGradient id="j1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#1E6FE8"/></linearGradient></defs><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="url(#j1)"/></svg>
+          </div>
+          <div>
+            <div class="sp-price">25 000 FCFA<span class="sp-old">35 000</span></div>
+            <div class="sp-sizes"><span class="sz on">S</span><span class="sz">M</span><span class="sz">L</span><span class="sz">XL</span><span class="sz">XXL</span></div>
+          </div>
+        </div>
+        <div class="sp-foot">
+          <span class="sp-soc"><i></i><i></i><i></i><i></i></span>
+          <span class="sp-slogan">— Le style de vos équipes, à portée de main —</span>
+          <span class="sp-thumbs"><span class="t on"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#CFE0FF"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#FFFFFF"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#7EC8F0"/></svg></span></span>
+        </div>
+      </div>
+    </div>
+    <p class="sp-vars">bg #F59200 · surface #3D1F05→#1C0E02→#4A2708 · accent #F5B62E · bouton #F0A62B (texte #1C0E02 calculé) · glow #FFA424 @0.6 · bordure rgba(255,164,36,.4)</p>
+  </div>
+
+  <!-- T2 BARCELONA -->
+  <div class="spec">
+    <h3>T2 · Maillot FC Barcelona — Édition 2025</h3>
+    <p class="mode">clair irisé · mode <b>clair</b></p>
+    <div class="sp-outer th" style="--ds-bg:#DFE6EF;--ds-gradient:linear-gradient(135deg,#FFFFFF 0%,#E9EDF4 100%);--ds-primary:#0B1B33;--ds-secondary:#5C6B84;--ds-accent:#3FB0D8;--ds-text:#0B1B33;--ds-muted:#5C6B84;--ds-button:#FFFFFF;--ds-btn-text:#0B1B33;--ds-btn-accent-text:#FFFFFF;--ds-glow:#C9D8F0;--ds-glow-intensity:.45;--ds-border:rgba(11,27,51,.12)">
+      <div class="sp-card">
+        <div class="sp-head">
+          <span class="sp-logo"><svg viewBox="0 0 24 24"><path d="M3 8l4 4 5-7 5 7 4-4-1.5 10h-15z"/></svg>Diao <b>shop</b></span>
+          <span class="sp-nav"><b>Boutique</b> &nbsp;·&nbsp; À propos &nbsp;·&nbsp; Contact</span>
+        </div>
+        <div class="sp-body">
+          <div>
+            <span class="sp-label"><i></i>Maillots de football</span>
+            <div class="sp-title">Maillot FC Barcelona<br><b>Édition 2025</b></div>
+            <p class="sp-desc">Description de démonstration — le texte réel est rédigé dans le back-office par l'administrateur.</p>
+            <button class="sp-cta" style="border:1.5px solid #3FB0D8">Ajouter au panier →</button>
+          </div>
+          <div class="sp-stage"><div class="sp-glow"></div>
+            <svg class="jersey" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#F4F8FB" stroke="#C9D6E4"/></svg>
+          </div>
+          <div>
+            <div class="sp-price">25 000 FCFA<span class="sp-old">35 000</span></div>
+            <div class="sp-sizes"><span class="sz on">S</span><span class="sz">M</span><span class="sz">L</span><span class="sz">XL</span><span class="sz">XXL</span></div>
+          </div>
+        </div>
+        <div class="sp-foot">
+          <span class="sp-soc"><i></i><i></i><i></i><i></i></span>
+          <span class="sp-slogan">— Le style de vos équipes, à portée de main —</span>
+          <span class="sp-thumbs"><span class="t on"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#F4F8FB"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#3B2A6B"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#E5322B"/></svg></span></span>
+        </div>
+      </div>
+    </div>
+    <p class="sp-vars">bg #DFE6EF · surface #FFFFFF→#E9EDF4 · accent #3FB0D8 · bouton #FFFFFF (texte #0B1B33 calculé) · glow #C9D8F0 @0.45 · bordure rgba(11,27,51,.12)</p>
+  </div>
+
+  <!-- T3 ARSENAL -->
+  <div class="spec">
+    <h3>T3 · Maillot Arsenal — Édition 2025</h3>
+    <p class="mode">violet / magenta · mode sombre</p>
+    <div class="sp-outer th" style="--ds-bg:#150820;--ds-gradient:linear-gradient(135deg,#230B34 0%,#140719 60%,#3A1150 100%);--ds-primary:#8B36D9;--ds-secondary:#2A0E3E;--ds-accent:#E85BD0;--ds-text:#FFFFFF;--ds-muted:#D9BFE8;--ds-button:#D944C8;--ds-btn-text:#FFFFFF;--ds-btn-accent-text:#2A0E3E;--ds-glow:#D63BC8;--ds-glow-intensity:.65;--ds-border:rgba(232,91,208,.3)">
+      <div class="sp-card">
+        <div class="sp-head">
+          <span class="sp-logo"><svg viewBox="0 0 24 24"><path d="M3 8l4 4 5-7 5 7 4-4-1.5 10h-15z"/></svg>Diao <b>shop</b></span>
+          <span class="sp-nav"><b>Boutique</b> &nbsp;·&nbsp; À propos &nbsp;·&nbsp; Contact</span>
+        </div>
+        <div class="sp-body">
+          <div>
+            <span class="sp-label"><i></i>Maillots de football</span>
+            <div class="sp-title">Maillot Arsenal<br><b>Édition 2025</b></div>
+            <p class="sp-desc">Description de démonstration — le texte réel est rédigé dans le back-office par l'administrateur.</p>
+            <button class="sp-cta">Ajouter au panier →</button>
+          </div>
+          <div class="sp-stage"><div class="sp-glow"></div>
+            <svg class="jersey" viewBox="0 0 100 100"><defs><linearGradient id="j3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4A1A6B"/><stop offset="1" stop-color="#241035"/></linearGradient></defs><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="url(#j3)"/></svg>
+          </div>
+          <div>
+            <div class="sp-price">25 000 FCFA<span class="sp-old">35 000</span></div>
+            <div class="sp-sizes"><span class="sz on">S</span><span class="sz">M</span><span class="sz">L</span><span class="sz">XL</span><span class="sz">XXL</span></div>
+          </div>
+        </div>
+        <div class="sp-foot">
+          <span class="sp-soc"><i></i><i></i><i></i><i></i></span>
+          <span class="sp-slogan">— Le style de vos équipes, à portée de main —</span>
+          <span class="sp-thumbs"><span class="t on"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#5A2A7B"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#7EC8F0"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#E5322B"/></svg></span></span>
+        </div>
+      </div>
+    </div>
+    <p class="sp-vars">bg #150820 · surface #230B34→#140719→#3A1150 · accent #E85BD0 · bouton #D944C8 (texte blanc calculé) · glow #D63BC8 @0.65 · bordure rgba(232,91,208,.3)</p>
+  </div>
+
+  <!-- T4 MAN CITY -->
+  <div class="spec">
+    <h3>T4 · Maillot Manchester City — Édition 2025</h3>
+    <p class="mode">bleu nuit / bleu ciel · mode sombre</p>
+    <div class="sp-outer th" style="--ds-bg:#06122E;--ds-gradient:linear-gradient(135deg,#0E2B6B 0%,#0A1C44 55%,#154CB0 100%);--ds-primary:#6CABDD;--ds-secondary:#0A1C44;--ds-accent:#7EC8F0;--ds-text:#FFFFFF;--ds-muted:#C3D9F2;--ds-button:#6CABDD;--ds-btn-text:#06122E;--ds-btn-accent-text:#06122E;--ds-glow:#4FA3E8;--ds-glow-intensity:.55;--ds-border:rgba(126,200,240,.3)">
+      <div class="sp-card">
+        <div class="sp-head">
+          <span class="sp-logo"><svg viewBox="0 0 24 24"><path d="M3 8l4 4 5-7 5 7 4-4-1.5 10h-15z"/></svg>Diao <b>shop</b></span>
+          <span class="sp-nav"><b>Boutique</b> &nbsp;·&nbsp; À propos &nbsp;·&nbsp; Contact</span>
+        </div>
+        <div class="sp-body">
+          <div>
+            <span class="sp-label"><i></i>Maillots de football</span>
+            <div class="sp-title">Maillot Manchester City<br><b>Édition 2025</b></div>
+            <p class="sp-desc">Description de démonstration — le texte réel est rédigé dans le back-office par l'administrateur.</p>
+            <button class="sp-cta">Ajouter au panier →</button>
+          </div>
+          <div class="sp-stage"><div class="sp-glow"></div>
+            <svg class="jersey" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#8FC6EA"/></svg>
+          </div>
+          <div>
+            <div class="sp-price">25 000 FCFA<span class="sp-old">35 000</span></div>
+            <div class="sp-sizes"><span class="sz on">S</span><span class="sz">M</span><span class="sz">L</span><span class="sz">XL</span><span class="sz">XXL</span></div>
+          </div>
+        </div>
+        <div class="sp-foot">
+          <span class="sp-soc"><i></i><i></i><i></i><i></i></span>
+          <span class="sp-slogan">— Le style de vos équipes, à portée de main —</span>
+          <span class="sp-thumbs"><span class="t on"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#8FC6EA"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#FFFFFF"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#2E0E44"/></svg></span></span>
+        </div>
+      </div>
+    </div>
+    <p class="sp-vars">bg #06122E · surface #0E2B6B→#0A1C44→#154CB0 · accent #7EC8F0 · bouton #6CABDD (texte #06122E calculé) · glow #4FA3E8 @0.55 · bordure rgba(126,200,240,.3)</p>
+  </div>
+
+  <!-- T5 REIMS -->
+  <div class="spec">
+    <h3>T5 · Maillot Stade de Reims</h3>
+    <p class="mode">noir / rouge · mode sombre</p>
+    <div class="sp-outer th" style="--ds-bg:#1A0505;--ds-gradient:linear-gradient(135deg,#2B0A0A 0%,#120303 60%,#3A0D0D 100%);--ds-primary:#E5322B;--ds-secondary:#3A0D0D;--ds-accent:#FF4B42;--ds-text:#FFFFFF;--ds-muted:#F0C9C7;--ds-button:#E5322B;--ds-btn-text:#FFFFFF;--ds-btn-accent-text:#2B0505;--ds-glow:#E5322B;--ds-glow-intensity:.7;--ds-border:rgba(229,50,43,.35)">
+      <div class="sp-card">
+        <div class="sp-head">
+          <span class="sp-logo"><svg viewBox="0 0 24 24"><path d="M3 8l4 4 5-7 5 7 4-4-1.5 10h-15z"/></svg>Diao <b>shop</b></span>
+          <span class="sp-nav"><b>Boutique</b> &nbsp;·&nbsp; À propos &nbsp;·&nbsp; Contact</span>
+        </div>
+        <div class="sp-body">
+          <div>
+            <span class="sp-label"><i></i>Maillots de football</span>
+            <div class="sp-title">Maillot Stade de Reims<br><b>Édition 2025</b></div>
+            <p class="sp-desc">Description de démonstration — le texte réel est rédigé dans le back-office par l'administrateur.</p>
+            <button class="sp-cta">Ajouter au panier →</button>
+          </div>
+          <div class="sp-stage"><div class="sp-glow"></div>
+            <svg class="jersey" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#1A1A1A" stroke="#E5322B" stroke-width="1.5"/></svg>
+          </div>
+          <div>
+            <div class="sp-price">25 000 FCFA<span class="sp-old">35 000</span></div>
+            <div class="sp-sizes"><span class="sz on">S</span><span class="sz">M</span><span class="sz">L</span><span class="sz">XL</span><span class="sz">XXL</span></div>
+          </div>
+        </div>
+        <div class="sp-foot">
+          <span class="sp-soc"><i></i><i></i><i></i><i></i></span>
+          <span class="sp-slogan">— Le style de vos équipes, à portée de main —</span>
+          <span class="sp-thumbs"><span class="t on"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#2A2A2A" stroke="#E5322B"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#FFFFFF"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#4FA3E8"/></svg></span></span>
+        </div>
+      </div>
+    </div>
+    <p class="sp-vars">bg #1A0505 · surface #2B0A0A→#120303→#3A0D0D · accent #FF4B42 · bouton #E5322B (texte blanc) · glow #E5322B @0.7 · bordure rgba(229,50,43,.35)</p>
+  </div>
+
+  <!-- T6 RENNAIS -->
+  <div class="spec">
+    <h3>T6 · Maillot Stade Rennais — Édition 2025</h3>
+    <p class="mode">noir / rouge profond · mode sombre</p>
+    <div class="sp-outer th" style="--ds-bg:#200606;--ds-gradient:linear-gradient(135deg,#260808 0%,#0E0303 60%,#38100E 100%);--ds-primary:#E23A2E;--ds-secondary:#38100E;--ds-accent:#FF6A5E;--ds-text:#FFFFFF;--ds-muted:#F2CFC9;--ds-button:#E23A2E;--ds-btn-text:#FFFFFF;--ds-btn-accent-text:#2B0606;--ds-glow:#FF3B30;--ds-glow-intensity:.65;--ds-border:rgba(255,106,94,.3)">
+      <div class="sp-card">
+        <div class="sp-head">
+          <span class="sp-logo"><svg viewBox="0 0 24 24"><path d="M3 8l4 4 5-7 5 7 4-4-1.5 10h-15z"/></svg>Diao <b>shop</b></span>
+          <span class="sp-nav"><b>Boutique</b> &nbsp;·&nbsp; À propos &nbsp;·&nbsp; Contact</span>
+        </div>
+        <div class="sp-body">
+          <div>
+            <span class="sp-label"><i></i>Maillots de football</span>
+            <div class="sp-title">Maillot Stade Rennais<br><b>Édition 2025</b></div>
+            <p class="sp-desc">Description de démonstration — le texte réel est rédigé dans le back-office par l'administrateur.</p>
+            <button class="sp-cta">Ajouter au panier →</button>
+          </div>
+          <div class="sp-stage"><div class="sp-glow"></div>
+            <svg class="jersey" viewBox="0 0 100 100"><defs><pattern id="p6" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#141414"/><rect x="0" width="3" height="10" fill="#E23A2E"/></pattern></defs><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="url(#p6)"/></svg>
+          </div>
+          <div>
+            <div class="sp-price">25 000 FCFA<span class="sp-old">35 000</span></div>
+            <div class="sp-sizes"><span class="sz on">S</span><span class="sz">M</span><span class="sz">L</span><span class="sz">XL</span><span class="sz">XXL</span></div>
+          </div>
+        </div>
+        <div class="sp-foot">
+          <span class="sp-soc"><i></i><i></i><i></i><i></i></span>
+          <span class="sp-slogan">— Le style de vos équipes, à portée de main —</span>
+          <span class="sp-thumbs"><span class="t on"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#141414" stroke="#E23A2E"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#CFE0FF"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#8FC6EA"/></svg></span></span>
+        </div>
+      </div>
+    </div>
+    <p class="sp-vars">bg #200606 · surface #260808→#0E0303→#38100E · accent #FF6A5E · bouton #E23A2E (texte blanc) · glow #FF3B30 @0.65 · bordure rgba(255,106,94,.3)</p>
+  </div>
+
+  <!-- FALLBACK -->
+  <div class="spec">
+    <h3>T7 · Thème de secours (produit sans thème enregistré)</h3>
+    <p class="mode">neutre or / sombre · automatique</p>
+    <div class="sp-outer th" style="--ds-bg:#101319;--ds-gradient:linear-gradient(135deg,#171A22 0%,#101319 60%,#1E2230 100%);--ds-primary:#F0A62B;--ds-secondary:#232733;--ds-accent:#F0A62B;--ds-text:#FFFFFF;--ds-muted:#B8BDC9;--ds-button:#F0A62B;--ds-btn-text:#14161D;--ds-btn-accent-text:#14161D;--ds-glow:#F0A62B;--ds-glow-intensity:.4;--ds-border:rgba(240,166,43,.25)">
+      <div class="sp-card">
+        <div class="sp-head">
+          <span class="sp-logo"><svg viewBox="0 0 24 24"><path d="M3 8l4 4 5-7 5 7 4-4-1.5 10h-15z"/></svg>Diao <b>shop</b></span>
+          <span class="sp-nav"><b>Boutique</b> &nbsp;·&nbsp; À propos &nbsp;·&nbsp; Contact</span>
+        </div>
+        <div class="sp-body">
+          <div>
+            <span class="sp-label"><i></i>Maillots de football</span>
+            <div class="sp-title">Nouveau maillot<br><b>À personnaliser</b></div>
+            <p class="sp-desc">Thème appliqué automatiquement lorsqu'un produit n'a pas encore de couleurs enregistrées.</p>
+            <button class="sp-cta">Ajouter au panier →</button>
+          </div>
+          <div class="sp-stage"><div class="sp-glow"></div>
+            <svg class="jersey" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#3A3F4C"/></svg>
+          </div>
+          <div>
+            <div class="sp-price">25 000 FCFA<span class="sp-old">35 000</span></div>
+            <div class="sp-sizes"><span class="sz on">S</span><span class="sz">M</span><span class="sz">L</span><span class="sz">XL</span><span class="sz">XXL</span></div>
+          </div>
+        </div>
+        <div class="sp-foot">
+          <span class="sp-soc"><i></i><i></i><i></i><i></i></span>
+          <span class="sp-slogan">— Le style de vos équipes, à portée de main —</span>
+          <span class="sp-thumbs"><span class="t on"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#3A3F4C"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#5A2A7B"/></svg></span><span class="t"><svg width="24" height="24" viewBox="0 0 100 100"><path d="M30 12 42 6c2 6 14 6 16 0l12 6 18 14-10 14-8-6v56H30V34l-8 6-10-14z" fill="#2A6B4F"/></svg></span></span>
+        </div>
+      </div>
+    </div>
+    <p class="sp-vars">bg #101319 · surface #171A22→#101319 · accent #F0A62B · bouton #F0A62B (texte #14161D calculé) · glow #F0A62B @0.4 · bordure rgba(240,166,43,.25)</p>
+  </div>
+
+  <div class="note" style="margin-top:40px"><b>Rappel :</b> ce fichier est un aperçu de validation du design system. La vraie page d'accueil (composition complète des affiches, animations, transitions produit↔thème) est le livrable de la <b>Phase 4</b>, sur ta validation.</div>
+
+</div>
+</body>
+</html>
