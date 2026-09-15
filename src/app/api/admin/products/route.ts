@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { exigerSession, erreurNonAutorise } from '@/lib/admin/guard';
 import { enregistrerProduit, getProduits, getProduit, supprimerProduit } from '@/lib/admin/store';
 import type { Product } from '@/lib/data/types';
+import { flush } from '@/lib/server/persistence';
 
 function slugify(s: string): string {
   return s
@@ -69,6 +70,7 @@ export async function POST(request: Request) {
   revalidatePath('/');
   revalidatePath('/boutique');
   revalidatePath('/admin/produits');
+  await flush(); // serverless : persister avant la réponse
   return NextResponse.json({ produit }, { status: 201 });
 }
 
@@ -102,6 +104,7 @@ export async function PUT(request: Request) {
   revalidatePath('/boutique');
   revalidatePath(`/produit/${maj.slug}`);
   revalidatePath('/admin/produits');
+  await flush(); // serverless : persister avant la réponse
   return NextResponse.json({ produit: maj });
 }
 
@@ -114,6 +117,7 @@ export async function DELETE(request: Request) {
   const { id } = (await request.json()) as { id?: string };
   if (!id || !getProduit(id)) return NextResponse.json({ erreur: { message: 'Produit introuvable.' } }, { status: 404 });
   supprimerProduit(id);
+  await flush(); // serverless : persister avant la réponse
   revalidatePath('/');
   revalidatePath('/boutique');
   revalidatePath('/admin/produits');

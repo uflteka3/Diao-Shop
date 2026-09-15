@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ajouterMessage } from '@/lib/admin/store';
+import { flush } from '@/lib/server/persistence';
 
 /** Contact public — validation + anti-spam basique (honeypot). */
 export async function POST(request: Request) {
@@ -24,5 +25,7 @@ export async function POST(request: Request) {
   }
 
   ajouterMessage({ name: nom, email: (body.email ?? '').trim(), phone: (body.phone ?? '').trim(), message: message.slice(0, 2000) });
+  // CRITIQUE (serverless) : persister avant la réponse — voir api/commandes.
+  await flush();
   return NextResponse.json({ ok: true }, { status: 201 });
 }

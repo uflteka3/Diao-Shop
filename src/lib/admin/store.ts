@@ -149,6 +149,12 @@ export function decrementerStock(productId: string, taille: string, quantite: nu
   }
 }
 
+/** Remplacement complet des commandes (résynchro depuis Supabase — sans marquer sale). */
+export function remplacerCommandes(orders: Order[]): void {
+  etat.commandes.clear();
+  for (const o of orders) etat.commandes.set(o.orderNumber, cloner(o));
+}
+
 // ---------- Paramètres ----------
 export function getParametres(): ShopSettings {
   return cloner(etat.parametres);
@@ -159,6 +165,12 @@ export function enregistrerParametres(maj: Partial<ShopSettings>): void {
   const propre = Object.fromEntries(Object.entries(maj).filter(([, valeur]) => valeur !== undefined)) as Partial<ShopSettings>;
   etat.parametres = { ...etat.parametres, ...propre };
   marquerSale('settings');
+}
+
+/** Remplacement complet des messages (résynchro depuis Supabase — sans marquer sale). */
+export function remplacerMessages(messages: ContactMessage[]): void {
+  etat.messages.length = 0;
+  for (const m of messages) etat.messages.push(cloner(m));
 }
 
 // ---------- Messages de contact ----------

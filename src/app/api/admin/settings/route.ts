@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { exigerSession, erreurNonAutorise } from '@/lib/admin/guard';
 import { enregistrerParametres, getParametres } from '@/lib/admin/store';
 import type { ShopSettings } from '@/lib/data/types';
+import { flush } from '@/lib/server/persistence';
 
 export async function GET() {
   try {
@@ -43,6 +44,7 @@ export async function PUT(request: Request) {
     contactText: body.contactText,
   } as Partial<ShopSettings>);
 
+  await flush(); // serverless : persister avant la réponse
   revalidatePath('/');
   revalidatePath('/contact');
   revalidatePath('/a-propos');

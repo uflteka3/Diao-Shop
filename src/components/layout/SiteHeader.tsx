@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
 import CrownLogo from '@/components/CrownLogo';
 import { CartIcon, CloseIcon, HeartIcon, MenuIcon, SearchIcon } from '@/components/Icons';
 import { useCart } from '@/contexts/CartContext';
@@ -17,8 +17,21 @@ const LINKS = [
 /** En-tête de la carte : logo, navigation flottante en pilule, recherche / favoris / panier. */
 export default function SiteHeader() {
   const pathname = usePathname();
+  const router = useRouter();
   const { count } = useCart();
   const [open, setOpen] = useState(false);
+
+  // Accès back-office DISCRET : la couronne n'ouvre l'admin qu'au TROISIÈME
+  // clic rapproché (fenêtre de 900 ms). Un clic seul ne fait strictement rien.
+  const clicsCouronne = useRef<number[]>([]);
+  function clicSurCouronne() {
+    const maintenant = Date.now();
+    clicsCouronne.current = [...clicsCouronne.current.filter((t) => maintenant - t < 900), maintenant];
+    if (clicsCouronne.current.length >= 3) {
+      clicsCouronne.current = [];
+      router.push('/admin');
+    }
+  }
 
   return (
     <header className="relative z-30 flex items-center justify-between gap-3 px-4 pt-4 sm:px-8 sm:pt-5 lg:px-10">
@@ -28,10 +41,17 @@ export default function SiteHeader() {
       >
         Aller au contenu
       </a>
-      <span className="flex items-center gap-2">
-        <Link href="/admin" className="focus-ring rounded-input" aria-label="Diao Shop">
+      <span className="flex select-none items-center gap-2">
+        <button
+          type="button"
+          onClick={clicSurCouronne}
+          onDoubleClick={(e) => e.preventDefault()}
+          className="focus-ring cursor-default rounded-input"
+          aria-label="Diao Shop"
+          title=""
+        >
           <CrownLogo className="h-7 w-7 text-[color:var(--ds-accent)]" />
-        </Link>
+        </button>
         <Link href="/" className="focus-ring rounded-input title-tight whitespace-nowrap text-xl font-extrabold text-[color:var(--ds-text)]" aria-label="Accueil">
           Diao <span className="text-[color:var(--ds-accent)]">shop</span>
         </Link>

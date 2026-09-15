@@ -7,8 +7,10 @@ n'est nécessaire : tout se fait à la souris depuis le back-office.
 
 ## 1. Se connecter
 
-1. Ouvrez la boutique, descendez en bas de n'importe quelle page ;
-2. Cliquez le petit lien **« Administration »** dans le pied de page ;
+1. Ouvrez la boutique ;
+2. En haut à gauche, **cliquez 3 fois de suite (rapidement) sur la couronne 👑** à
+   gauche du logo « Diao shop » — un ou deux clics ne font rien, c'est voulu pour
+   garder l'accès discret ;
 3. Saisissez votre email et votre mot de passe d'administrateur, puis **Se connecter**.
 
 > 🔒 Email administrateur : **uflteka3@gmail.com** (mot de passe défini par vos soins).

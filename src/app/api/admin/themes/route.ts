@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { exigerSession, erreurNonAutorise } from '@/lib/admin/guard';
 import { enregistrerTheme, getProduit, getTheme } from '@/lib/admin/store';
 import type { ProductTheme, ThemeMode } from '@/lib/data/types';
+import { flush } from '@/lib/server/persistence';
 
 const COULEUR = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 const GRADIENT_OK = (s: string) => s.startsWith('linear-gradient(') || s.startsWith('radial-gradient(');
@@ -51,6 +52,7 @@ export async function PUT(request: Request) {
   const mode: ThemeMode = theme.mode === 'light' ? 'light' : 'dark';
 
   enregistrerTheme(productId, { ...theme, glowIntensity: intensite, mode });
+  await flush(); // serverless : persister avant la réponse
   revalidatePath('/');
   revalidatePath('/boutique');
   revalidatePath('/admin/themes');

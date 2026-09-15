@@ -4,11 +4,16 @@ import { notFound } from 'next/navigation';
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
 import { getOrderByNumber } from '@/lib/data/orderRepository';
+import { chargerCommandeDirecte } from '@/lib/server/commandesDirectes';
 import { getShopSettings } from '@/lib/data/settingsRepository';
 import { FALLBACK_THEME } from '@/lib/data/seed/themes';
 import { themeToCssVars } from '@/lib/themes/cssVariables';
 import { formatPrix } from '@/lib/utils/format';
 import { fr } from '@/lib/i18n/fr';
+
+// Rendu toujours à jour : une commande créée il y a une seconde doit être
+// affichée — jamais de cache de route ici (le 404 ne doit pas être mémorisé).
+export const dynamic = 'force-dynamic';
 
 interface Props {
   params: { numero: string };
@@ -19,8 +24,10 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default function ConfirmationPage({ params }: Props) {
-  const order = getOrderByNumber(params.numero);
+export default async function ConfirmationPage({ params }: Props) {
+  // Lecture DIRECTE en base (source de vérité) puis repli mémoire — sur Vercel,
+  // la commande peut avoir été créée par une autre instance serverless.
+  const order = (await chargerCommandeDirecte(params.numero)) ?? getOrderByNumber(params.numero);
   if (!order) notFound();
 
   const settings = getShopSettings();
@@ -137,7 +144,7 @@ export default function ConfirmationPage({ params }: Props) {
                   href={whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="cta-shadow focus-ring mt-6 flex h-14 w-full items-center justify-center gap-3 rounded-pill text-[15px] font-bold"
+                  className="cta-shadow btn-shine focus-ring mt-6 flex h-14 w-full items-center justify-center gap-3 rounded-pill text-[15px] font-bold transition-transform hover:-translate-y-px active:scale-[0.99]"
                   style={{ backgroundColor: 'var(--ds-button)', color: 'var(--ds-button-text)' }}
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true" focusable="false">
@@ -151,13 +158,22 @@ export default function ConfirmationPage({ params }: Props) {
                 </p>
               )}
 
-              <Link
-                href="/boutique"
-                className="focus-ring mt-4 block text-center text-[13px] font-semibold underline underline-offset-4"
-                style={{ color: 'var(--ds-accent)' }}
-              >
-                {fr.confirmation.retourBoutique}
-              </Link>
+              <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <Link
+                  href="/boutique"
+                  className="focus-ring inline-flex h-12 items-center justify-center rounded-pill px-6 text-sm font-bold transition-transform hover:-translate-y-px active:scale-[0.99]"
+                  style={{ backgroundColor: 'var(--ds-button)', color: 'var(--ds-button-text)' }}
+                >
+                  {fr.confirmation.retourBoutique}
+                </Link>
+                <Link
+                  href="/"
+                  className="focus-ring inline-flex h-12 items-center justify-center rounded-pill border px-6 text-sm font-bold text-[color:var(--ds-text)] hover-tint"
+                  style={{ borderColor: 'var(--ds-border)' }}
+                >
+                  {fr.commune.retourAccueil}
+                </Link>
+              </div>
 
             </div>
           </div>

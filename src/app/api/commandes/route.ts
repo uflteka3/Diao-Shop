@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { commandeSchema } from '@/lib/validation/commande';
 import { createOrder } from '@/lib/data/orderRepository';
+import { flush } from '@/lib/server/persistence';
 
 /**
  * Création de commande — SERVEUR UNIQUEMENT.
@@ -26,6 +27,10 @@ export async function POST(request: Request) {
         { status: resultat.code === 'stock_insuffisant' ? 409 : 400 }
       );
     }
+
+    // CRITIQUE (serverless) : écrire en base AVANT de répondre — la fonction
+    // est gelée juste après la réponse, le flush temporisé ne partirait jamais.
+    await flush();
 
     return NextResponse.json(
       { numero: resultat.order.orderNumber, total: resultat.order.total },

@@ -1,9 +1,12 @@
 import MessagesAdmin from '@/components/admin/MessagesAdmin';
 import { getMessages } from '@/lib/admin/store';
+import { rafraichirMessages } from '@/lib/server/commandesDirectes';
 
 export const dynamic = 'force-dynamic';
 
-export default function AdminMessagesPage() {
+export default async function AdminMessagesPage() {
+  // Résynchro : les messages arrivent du site public (autres instances Vercel).
+  await rafraichirMessages();
   return (
     <div>
       <h1 className="title-tight text-2xl font-extrabold sm:text-3xl">Messages</h1>

@@ -58,6 +58,17 @@ export default function CartView({ produits }: { produits: Product[] }) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      {/* ----- Continuer ses achats (accès direct, toujours visible) ----- */}
+      <div className="lg:col-span-2">
+        <Link
+          href="/boutique"
+          className="focus-ring inline-flex min-h-[44px] items-center rounded-pill border px-4 py-2 text-[13px] font-semibold text-[color:var(--ds-muted)] transition-colors hover:text-[color:var(--ds-text)]"
+          style={{ borderColor: 'var(--ds-border)' }}
+        >
+          ← {fr.panier.continuerAchats}
+        </Link>
+      </div>
+
       {/* ----- Lignes du panier ----- */}
       <ul className="space-y-3">
         {items.map((item) => {

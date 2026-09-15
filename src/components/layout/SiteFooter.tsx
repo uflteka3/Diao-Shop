@@ -1,5 +1,6 @@
 import CrownLogo from '@/components/CrownLogo';
 import { ConfiguredSocialLinks } from '@/components/SocialIcons';
+import { MailIcon, MapPinIcon, PhoneIcon, WhatsAppIcon } from '@/components/Icons';
 import type { ShopSettings } from '@/lib/data/types';
 import Link from 'next/link';
 
@@ -45,11 +46,48 @@ export default function SiteFooter({ settings }: { settings: ShopSettings }) {
 
           <div>
             <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[color:var(--ds-muted)]">Contact</p>
-            <ul className="mt-3 space-y-2 text-sm text-[color:var(--ds-text)]">
-              {settings.phone && <li>Téléphone : {settings.phone}</li>}
-              {settings.whatsapp && <li>WhatsApp : {settings.whatsapp}</li>}
-              {settings.email && <li>Email : {settings.email}</li>}
-              {settings.address && <li>Adresse : {settings.address}</li>}
+            <ul className="mt-3 space-y-2.5 text-sm text-[color:var(--ds-text)]">
+              {settings.whatsapp && (
+                <li>
+                  <a
+                    href={`https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="focus-ring inline-flex items-center gap-2 rounded transition-colors hover:text-[color:var(--ds-accent)]"
+                  >
+                    <WhatsAppIcon className="h-4 w-4 flex-none" aria-hidden />
+                    {settings.whatsapp}
+                  </a>
+                </li>
+              )}
+              {settings.phone && (
+                <li>
+                  <a
+                    href={`tel:${settings.phone.replace(/\s/g, '')}`}
+                    className="focus-ring inline-flex items-center gap-2 rounded transition-colors hover:text-[color:var(--ds-accent)]"
+                  >
+                    <PhoneIcon className="h-4 w-4 flex-none" aria-hidden />
+                    <span className="price-tnum">{settings.phone}</span>
+                  </a>
+                </li>
+              )}
+              {settings.email && (
+                <li>
+                  <a
+                    href={`mailto:${settings.email}`}
+                    className="focus-ring inline-flex items-center gap-2 rounded transition-colors hover:text-[color:var(--ds-accent)]"
+                  >
+                    <MailIcon className="h-4 w-4 flex-none" aria-hidden />
+                    <span className="break-all">{settings.email}</span>
+                  </a>
+                </li>
+              )}
+              {settings.address && (
+                <li className="flex items-center gap-2">
+                  <MapPinIcon className="h-4 w-4 flex-none" aria-hidden />
+                  {settings.address}
+                </li>
+              )}
             </ul>
           </div>
         </div>

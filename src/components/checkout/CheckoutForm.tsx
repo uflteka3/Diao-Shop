@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
+import { ArrowLeftIcon } from '@/components/Icons';
 import type { ShopSettings } from '@/lib/data/types';
 import { formatPrix } from '@/lib/utils/format';
 import { fr } from '@/lib/i18n/fr';
@@ -86,6 +87,17 @@ export default function CheckoutForm({ settings }: Props) {
 
   return (
     <form onSubmit={soumettre} className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+      {/* ----- Retour panier (visible en permanence) ----- */}
+      <div className="lg:col-span-2">
+        <Link
+          href="/panier"
+          className="focus-ring inline-flex min-h-[44px] items-center gap-2 rounded-pill border px-4 py-2 text-[13px] font-semibold text-[color:var(--ds-muted)] transition-colors hover:text-[color:var(--ds-text)]"
+          style={{ borderColor: 'var(--ds-border)' }}
+        >
+          <ArrowLeftIcon className="h-4 w-4" aria-hidden />
+          {fr.commande.retourPanier}
+        </Link>
+      </div>
       {/* ----- Formulaire ----- */}
       <div className="space-y-5 rounded-panel border p-5 sm:p-6" style={{ borderColor: 'var(--ds-border)', backgroundColor: 'color-mix(in srgb, var(--ds-secondary) 60%, transparent)' }}>
         <fieldset>
@@ -219,6 +231,13 @@ export default function CheckoutForm({ settings }: Props) {
         >
           {envoi ? fr.commande.envoi : fr.commande.confirmer}
         </button>
+        <Link
+          href="/boutique"
+          className="focus-ring mt-3 block text-center text-[13px] font-semibold underline underline-offset-4"
+          style={{ color: 'var(--ds-accent)' }}
+        >
+          {fr.panier.continuerAchats}
+        </Link>
       </aside>
     </form>
   );

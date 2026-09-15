@@ -13,8 +13,11 @@ const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
 function genererNumero(): string {
   let s = '';
-  for (let i = 0; i < 6; i++) s += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
-  return `DS-${getCommandes().some((o) => o.orderNumber === `DS-${s}`) ? genererNumero() : `DS-${s}`.slice(3)}`;
+  do {
+    s = '';
+    for (let i = 0; i < 6; i++) s += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
+  } while (getCommandes().some((o) => o.orderNumber === `DS-${s}`));
+  return `DS-${s}`;
 }
 
 export interface LignePanierServeur {

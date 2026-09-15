@@ -10,6 +10,7 @@ import { formatPrix } from '@/lib/utils/format';
 import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import ProductVisual from '@/components/ProductVisual';
+import CrownLogo from '@/components/CrownLogo';
 import SiteHeader from '@/components/layout/SiteHeader';
 import {
   ArrowRightIcon,
@@ -392,6 +393,30 @@ export default function HomeHero({ products, initialFeaturedId, settings, themes
           </div>
         </section>
 
+      </div>
+
+      {/* Bandeau défilant — messages clés de la boutique (factualité : slogan + services configurés) */}
+      <div className="ds-marquee relative mt-2 border-y py-3" style={{ borderColor: 'var(--ds-border)' }} aria-hidden="true">
+        <div className="ds-marquee-piste">
+          {[0, 1].map((copie) => (
+            <ul key={copie} className="flex flex-none items-center" aria-hidden={copie === 1}>
+              {[
+                settings.slogan || 'Le style de vos équipes, à portée de main',
+                'Livraison à Ouagadougou',
+                settings.paymentSettings.label,
+                'Stock réel affiché',
+                'Maillots premium',
+              ].map((texte, i) => (
+                <li key={`${copie}-${i}`} className="flex flex-none items-center">
+                  <span className="whitespace-nowrap px-6 text-[13px] font-bold uppercase tracking-[0.14em] text-[color:var(--ds-muted)]">
+                    {texte}
+                  </span>
+                  <CrownLogo className="h-3.5 w-3.5 flex-none text-[color:var(--ds-accent)]" />
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
       </div>
 
       {/* Toast de confirmation d'ajout au panier */}
