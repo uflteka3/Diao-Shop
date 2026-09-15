@@ -97,9 +97,6 @@ export default function DashboardPage() {
         )}
       </section>
 
-      <p className="mt-6 rounded-input border border-dashed border-[#262B38] p-3 text-center text-[11.5px] text-[#5D6472]">
-        Mode démonstration : les données vivent en mémoire (réinitialisées au redémarrage). Phase 8 : persistance Supabase.
-      </p>
     </div>
   );
 }

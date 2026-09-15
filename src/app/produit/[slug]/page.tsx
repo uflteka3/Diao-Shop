@@ -4,7 +4,7 @@ import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
 import ProductDetail from '@/components/produit/ProductDetail';
 import ProductCard from '@/components/catalogue/ProductCard';
-import { getAllProducts, getProductBySlug, getPublishedProducts } from '@/lib/data/productRepository';
+import { getProductBySlug, getPublishedProducts } from '@/lib/data/productRepository';
 import { getShopSettings } from '@/lib/data/settingsRepository';
 import { resolveTheme } from '@/lib/themes/resolveTheme';
 import { themeToCssVars } from '@/lib/themes/cssVariables';
@@ -69,7 +69,6 @@ export default function ProduitPage({ params }: Props) {
   const memeEquipe = published.filter((p) => p.team === product.team);
   const autres = published.filter((p) => p.team !== product.team);
   const similaires = [...memeEquipe, ...autres].slice(0, 4);
-  const tous = getAllProducts();
 
   return (
     <div
@@ -115,9 +114,6 @@ export default function ProduitPage({ params }: Props) {
         </section>
 
         <SiteFooter settings={settings} />
-        <p className="mb-6 mt-4 text-center text-[11px] font-medium" style={{ color: 'color-mix(in srgb, var(--ds-text) 55%, transparent)' }}>
-          Démo — Données de démonstration à remplacer depuis le back-office. ({tous.length} maillots au catalogue)
-        </p>
       </div>
     </div>
   );

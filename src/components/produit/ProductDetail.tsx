@@ -297,7 +297,6 @@ export default function ProductDetail({ product }: Props) {
               </svg>
             </button>
           </div>
-          <p className="mt-3 text-[11.5px] text-[color:color-mix(in_srgb,var(--ds-text)_55%,transparent)]">{fr.home.reel}</p>
         </div>
       </div>
 

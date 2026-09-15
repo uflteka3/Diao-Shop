@@ -159,9 +159,6 @@ export default function ConfirmationPage({ params }: Props) {
                 {fr.confirmation.retourBoutique}
               </Link>
 
-              <p className="mt-5 text-center text-[11px]" style={{ color: 'color-mix(in srgb, var(--ds-text) 50%, transparent)' }}>
-                {fr.confirmation.noteDemo}
-              </p>
             </div>
           </div>
         </section>

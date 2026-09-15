@@ -31,14 +31,8 @@ export const fr = {
     stockNombre: (n: number) => `${n} disponible${n > 1 ? 's' : ''}`,
     epuise: 'Épuisé',
     tailleIndisponible: 'Taille momentanément épuisée',
-    tagDemo: 'Démo',
-    reel: 'Donnée de démonstration à remplacer depuis le back-office.',
     aucunProduitTitre: 'Aucun maillot mis en avant',
-    aucunProduitTexte:
-      'Le produit principal de la page d’accueil sera choisi par l’administrateur depuis le back-office (section « Mise en avant »).',
-    descriptionDemo:
-      'Description de démonstration — le texte définitif sera rédigé dans le back-office par l’administrateur.',
-    lienNonConfigure: 'Lien à configurer dans le back-office',
+    aucunProduitTexte: 'Le maillot en vedette apparaîtra ici très bientôt.',
   },
   produit: {
     acheter: 'Acheter maintenant',
@@ -116,10 +110,9 @@ export const fr = {
     retourBoutique: 'Retour à la boutique',
     introuvable: 'Commande introuvable',
     introuvableTexte: 'Vérifiez le numéro de commande ou contactez la boutique.',
-    noteDemo: 'Mode démonstration : la commande est enregistrée en mémoire. Phase 8 : enregistrement dans Supabase.',
   },
   placeholders: {
     titre: 'Page en cours de réalisation',
-    texte: 'Cette page sera livrée dans une prochaine phase, conformément au cahier des charges (design premium, fonctionnalités complètes et administration sans code).',
+    texte: 'Cette page n’existe pas ou a été déplacée. Retournez à l’accueil pour poursuivre votre visite.',
   },
 } as const;

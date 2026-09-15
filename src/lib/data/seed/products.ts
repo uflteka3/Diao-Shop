@@ -4,7 +4,7 @@ const TAILLES = ['S', 'M', 'L', 'XL', 'XXL'];
 const taillesDemo = TAILLES.map((size) => ({ size, stock: 12, active: true }));
 
 function demoDescription(equipe: string): string {
-  return `Maillot de football — ${equipe}. Description de démonstration à remplacer depuis le back-office.`;
+  return `Maillot de football — ${equipe}.`;
 }
 
 /**

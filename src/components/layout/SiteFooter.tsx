@@ -50,19 +50,12 @@ export default function SiteFooter({ settings }: { settings: ShopSettings }) {
               {settings.whatsapp && <li>WhatsApp : {settings.whatsapp}</li>}
               {settings.email && <li>Email : {settings.email}</li>}
               {settings.address && <li>Adresse : {settings.address}</li>}
-              {!settings.phone && !settings.whatsapp && !settings.email && !settings.address && (
-                <li className="text-[color:var(--ds-muted)]">Coordonnées à configurer dans le back-office.</li>
-              )}
             </ul>
           </div>
         </div>
 
         <p className="mt-8 border-t pt-5 text-center text-[12px] text-[color:var(--ds-muted)]" style={{ borderColor: 'var(--ds-border)' }}>
           © {annee} Diao Shop — Tous droits réservés.
-          <span aria-hidden="true"> · </span>
-          <Link href="/admin/login" className="focus-ring rounded-input underline decoration-[color:var(--ds-border)] underline-offset-4 transition-colors hover:text-[color:var(--ds-text)]">
-            Administration
-          </Link>
         </p>
       </div>
     </footer>

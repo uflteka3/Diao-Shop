@@ -63,7 +63,7 @@ export default function ContactPage() {
             <ConfiguredSocialLinks links={s.socialLinks} className="flex gap-3 pt-1" />
             {!s.phone && !s.email && !s.whatsapp && !s.address && (
               <p className="rounded-panel border border-dashed p-5 text-sm text-[color:var(--ds-muted)]" style={{ borderColor: 'var(--ds-border)' }}>
-                Les coordonnées ne sont pas encore configurées — utilisez le formulaire pour nous écrire.
+                Écrivez-nous via le formulaire ci-contre.
               </p>
             )}
           </div>

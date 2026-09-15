@@ -140,9 +140,6 @@ export default function CheckoutForm({ settings }: Props) {
               <textarea className="focus-ring w-full rounded-input border bg-transparent px-4 py-3 text-sm text-[color:var(--ds-text)] placeholder:text-[color:color-mix(in_srgb,var(--ds-text)_40%,transparent)]" style={champStyle} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={fr.commande.notesPlaceholder} rows={3} maxLength={500} />
             </label>
           </div>
-          <p className="mt-2 text-[11.5px] text-[color:color-mix(in_srgb,var(--ds-text)_55%,transparent)]">
-            Démo — Zones et frais de livraison à remplacer depuis le back-office.
-          </p>
         </fieldset>
 
         <fieldset className="border-t pt-5" style={{ borderColor: 'var(--ds-border)' }}>

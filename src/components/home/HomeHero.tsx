@@ -392,12 +392,6 @@ export default function HomeHero({ products, initialFeaturedId, settings, themes
           </div>
         </section>
 
-        <p
-          className="mt-4 text-center text-[11px] font-medium"
-          style={{ color: 'color-mix(in srgb, var(--ds-text) 62%, transparent)' }}
-        >
-          {fr.home.tagDemo} — {fr.home.reel}
-        </p>
       </div>
 
       {/* Toast de confirmation d'ajout au panier */}

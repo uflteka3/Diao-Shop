@@ -85,9 +85,6 @@ export default function AdminLoginPage() {
             <FormulaireConnexion />
           </Suspense>
         </div>
-        <p className="mt-5 rounded-input border p-3 text-[11px] leading-relaxed text-[color:var(--ds-muted)]" style={{ borderColor: 'var(--ds-border)' }}>
-          Mode démonstration : identifiants définis dans <code>.env.local</code> (ADMIN_EMAIL / ADMIN_PASSWORD). Phase 8 : Supabase Auth.
-        </p>
       </div>
     </div>
   );

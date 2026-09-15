@@ -28,12 +28,14 @@ export default function SiteHeader() {
       >
         Aller au contenu
       </a>
-      <Link href="/" className="flex items-center gap-2.5 focus-ring" aria-label={fr.header.logoAlt}>
-        <CrownLogo className="h-7 w-7 text-[color:var(--ds-accent)]" />
-        <span className="title-tight whitespace-nowrap text-xl font-extrabold text-[color:var(--ds-text)]">
+      <span className="flex items-center gap-2">
+        <Link href="/admin" className="focus-ring rounded-input" aria-label="Diao Shop">
+          <CrownLogo className="h-7 w-7 text-[color:var(--ds-accent)]" />
+        </Link>
+        <Link href="/" className="focus-ring rounded-input title-tight whitespace-nowrap text-xl font-extrabold text-[color:var(--ds-text)]" aria-label="Accueil">
           Diao <span className="text-[color:var(--ds-accent)]">shop</span>
-        </span>
-      </Link>
+        </Link>
+      </span>
 
       <nav aria-label={fr.nav.principale} className="absolute left-1/2 hidden -translate-x-1/2 md:block">
         <ul className="bg-tint flex items-center gap-1 rounded-pill border px-2 py-1.5" style={{ borderColor: 'var(--ds-border)' }}>

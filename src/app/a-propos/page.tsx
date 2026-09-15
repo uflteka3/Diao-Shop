@@ -20,8 +20,7 @@ export default function AProposPage() {
             <p className="whitespace-pre-line">{s.aboutText}</p>
           ) : (
             <p>
-              Le texte de présentation n’est pas encore configuré — l’administrateur peut le rédiger dans{' '}
-              <strong className="text-[color:var(--ds-text)]">Administration → Paramètres</strong>.
+              La présentation de la boutique arrive bientôt.
             </p>
           )}
         </div>
