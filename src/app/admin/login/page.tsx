@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import CrownLogo from '@/components/CrownLogo';
@@ -12,6 +13,7 @@ function FormulaireConnexion() {
   const [password, setPassword] = useState('');
   const [erreur, setErreur] = useState<string | null>(null);
   const [envoi, setEnvoi] = useState(false);
+  const reinitialise = params.get('reset') === 'ok';
 
   async function soumettre(e: React.FormEvent) {
     e.preventDefault();
@@ -49,6 +51,11 @@ function FormulaireConnexion() {
         <span className="mb-1.5 block text-[13px] font-semibold">Mot de passe</span>
         <input type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className={styleChamp} style={{ borderColor: 'var(--ds-border)', color: 'var(--ds-text)' }} />
       </label>
+      {reinitialise && !erreur && (
+        <p role="status" className="rounded-input border p-3 text-[12.5px] font-semibold" style={{ borderColor: 'var(--ds-border)', color: 'var(--ds-text)' }}>
+          ✅ Mot de passe mis à jour — connectez-vous avec votre nouveau mot de passe.
+        </p>
+      )}
       {erreur && (
         <p role="alert" className="rounded-input border p-3 text-[12.5px] font-medium" style={{ borderColor: 'var(--ds-danger)', color: 'var(--ds-danger)' }}>
           {erreur}
@@ -62,6 +69,11 @@ function FormulaireConnexion() {
       >
         {envoi ? 'Connexion…' : 'Se connecter'}
       </button>
+      <p className="text-center">
+        <Link href="/admin/mot-de-passe-oublie" className="focus-ring rounded-input text-[12.5px] font-semibold underline underline-offset-4" style={{ color: 'var(--ds-muted)' }}>
+          Mot de passe oublié ?
+        </Link>
+      </p>
     </form>
   );
 }

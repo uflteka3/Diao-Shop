@@ -41,12 +41,20 @@ indispensable à la mise en ligne.
 
 ## 4. Sécurité — à faire après mise en ligne
 
-1. **Mot de passe admin** : Supabase → Authentication → Users → `admin@diaoshop.demo`
-   → modifier le mot de passe (il a servi pendant les démonstrations) ;
+1. **Compte admin** : `uflteka3@gmail.com` — pour changer le mot de passe à tout
+   moment, utilisez « Mot de passe oublié ? » sur la page de connexion (email de
+   réinitialisation Supabase). La modification directe reste possible dans
+   Authentication → Users ;
 2. **Rotation de la clé `service_role`** : Settings → API → Rotate keys (elle a circulé
    dans les échanges) → mettez à jour `SUPABASE_SERVICE_ROLE_KEY` sur l'hébergement ;
 3. `ADMIN_SESSION_SECRET` : générez une longue chaîne aléatoire (32+ caractères) ;
-4. Vérifiez que `.env.local` n'est jamais versionné (déjà le cas).
+4. Vérifiez que `.env.local` n'est jamais versionné (déjà le cas) ;
+5. **Liens de réinitialisation (important au changement de domaine)** : dans Supabase →
+   Authentication → URL Configuration, définissez **Site URL** = votre domaine et ajoutez
+   dans **Redirect URLs** : `https://VOTRE-DOMAINE/**` (sans cela, les liens « mot de
+   passe oublié » pointeront vers l'ancienne adresse). Le service d'emails intégré de
+   Supabase est limité (~2 à 4 emails/heure) : branchez un SMTP dédié
+   (Authentication → Providers → SMTP) pour un usage régulier.
 
 ## 5. Comptes supplémentaires
 

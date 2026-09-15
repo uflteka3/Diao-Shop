@@ -11,9 +11,12 @@ n'est nécessaire : tout se fait à la souris depuis le back-office.
 2. Cliquez le petit lien **« Administration »** dans le pied de page ;
 3. Saisissez votre email et votre mot de passe d'administrateur, puis **Se connecter**.
 
-> 🔒 Identifiants actuels (à modifier — voir guide de déploiement) :
-> `admin@diaoshop.demo` / `diaoshop-2026`.
+> 🔒 Email administrateur : **uflteka3@gmail.com** (mot de passe défini par vos soins).
 > La session reste active 12 h sur votre navigateur. En bas du menu : **Se déconnecter**.
+>
+> **Mot de passe oublié ?** Cliquez « Mot de passe oublié ? » sous le formulaire de
+> connexion : un email vous est envoyé avec un lien pour définir un nouveau mot de
+> passe (lien à usage unique, valable une heure). Pensez aux spams.
 
 ---
 
