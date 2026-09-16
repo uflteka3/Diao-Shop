@@ -1,4 +1,5 @@
-import type { ContactMessage, Order, OrderItem } from '@/lib/data/types';
+import type { ContactMessage, Order, OrderItem, Product, ProductSize, ProductTheme, ShopSettings } from '@/lib/data/types';
+import { remplacerCatalogue, remplacerParametres } from '@/lib/admin/store';
 import { remplacerCommandes, remplacerMessages } from '@/lib/admin/store';
 
 /**
@@ -113,6 +114,90 @@ export async function rafraichirCommandes(): Promise<void> {
     remplacerCommandes(commandes.map((o) => versOrder(o, parCommande.get(String(o.id)) ?? [])));
   } catch (erreur) {
     console.error('[commandesDirectes] résynchro commandes impossible :', erreur);
+  }
+}
+
+/**
+ * Résynchro du catalogue (produits, tailles, images, thèmes, mise en avant)
+ * depuis Supabase — les pages admin reflètent toujours la vraie base, même
+ * si une autre instance serverless vient de modifier le catalogue.
+ */
+export async function rafraichirCatalogue(): Promise<void> {
+  const cfg = config();
+  if (!cfg) return;
+  try {
+    const [produits, tailles, images, themes] = await Promise.all([
+      rest<Rangee[]>(cfg, '/rest/v1/products?select=*'),
+      rest<Rangee[]>(cfg, '/rest/v1/product_sizes?select=*'),
+      rest<Rangee[]>(cfg, '/rest/v1/product_images?order=position.asc&select=*'),
+      rest<Rangee[]>(cfg, '/rest/v1/product_themes?select=*'),
+    ]);
+    const taillesParProduit = new Map<string, ProductSize[]>();
+    for (const t of tailles) {
+      const liste = taillesParProduit.get(String(t.product_id)) ?? [];
+      liste.push({ size: String(t.size ?? ''), stock: nombre(t.stock), active: Boolean(t.active) });
+      taillesParProduit.set(String(t.product_id), liste);
+    }
+    const imagesParProduit = new Map<string, { main: string; galerie: string[] }>();
+    for (const im of images) {
+      const id = String(im.product_id);
+      const cur = imagesParProduit.get(id) ?? { main: '', galerie: [] };
+      if (im.is_main) cur.main = String(im.url ?? '');
+      else cur.galerie.push(String(im.url ?? ''));
+      imagesParProduit.set(id, cur);
+    }
+    const themesParProduit: Record<string, ProductTheme> = {};
+    for (const t of themes) {
+      themesParProduit[String(t.product_id)] = {
+        backgroundColor: String(t.background_color ?? '#12141C'),
+        primaryColor: String(t.primary_color ?? '#222838'),
+        secondaryColor: String(t.secondary_color ?? '#1A1D28'),
+        accentColor: String(t.accent_color ?? '#F0A62B'),
+        textColor: String(t.text_color ?? '#FFFFFF'),
+        mutedTextColor: String(t.muted_text_color ?? '#C4CCE0'),
+        buttonColor: String(t.button_color ?? '#F0A62B'),
+        glowColor: String(t.glow_color ?? '#F0A62B'),
+        glowIntensity: nombre(t.glow_intensity, 0.4),
+        surfaceGradient: String(t.surface_gradient ?? 'linear-gradient(135deg, #1C2030 0%, #12141C 55%, #232840 100%)'),
+        borderColor: String(t.border_color ?? 'rgba(255,255,255,0.14)'),
+        mode: t.mode === 'light' ? 'light' : 'dark',
+      };
+    }
+    const produitsMap: Product[] = produits.map((p) => ({
+      id: String(p.id),
+      slug: String(p.slug ?? ''),
+      name: String(p.name ?? ''),
+      subTitle: String(p.sub_title ?? ''),
+      team: String(p.team ?? p.name ?? ''),
+      shortDescription: String(p.short_description ?? ''),
+      description: String(p.description ?? ''),
+      price: nombre(p.price),
+      oldPrice: p.old_price == null ? null : nombre(p.old_price),
+      currency: String(p.currency ?? 'FCFA'),
+      mainImage: imagesParProduit.get(String(p.id))?.main ?? '',
+      gallery: imagesParProduit.get(String(p.id))?.galerie ?? [],
+      altText: String(p.alt_text ?? ''),
+      sizes: taillesParProduit.get(String(p.id)) ?? [],
+      published: Boolean(p.published),
+      isFeatured: Boolean(p.is_featured),
+      createdAt: String(p.created_at ?? new Date().toISOString()),
+    }));
+    remplacerCatalogue(produitsMap, themesParProduit);
+  } catch (erreur) {
+    console.error('[commandesDirectes] résynchro catalogue impossible :', erreur);
+  }
+}
+
+/** Résynchro des paramètres boutique depuis Supabase. */
+export async function rafraichirParametres(): Promise<void> {
+  const cfg = config();
+  if (!cfg) return;
+  try {
+    const lignes = await rest<Rangee[]>(cfg, '/rest/v1/shop_settings?select=data&id=eq.1');
+    const data = lignes[0]?.data as ShopSettings | undefined;
+    if (data) remplacerParametres(data);
+  } catch (erreur) {
+    console.error('[commandesDirectes] résynchro paramètres impossible :', erreur);
   }
 }
 

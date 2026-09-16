@@ -1,9 +1,11 @@
 import FeaturedPicker from '@/components/admin/FeaturedPicker';
 import { getFeaturedId, getProduits } from '@/lib/admin/store';
+import { rafraichirCatalogue } from '@/lib/server/commandesDirectes';
 
 export const dynamic = 'force-dynamic';
 
-export default function MiseEnAvantPage() {
+export default async function MiseEnAvantPage() {
+  await rafraichirCatalogue();
   return (
     <div>
       <h1 className="title-tight text-2xl font-extrabold sm:text-3xl">Mise en avant</h1>

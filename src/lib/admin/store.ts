@@ -157,6 +157,21 @@ export function decrementerStock(productId: string, taille: string, quantite: nu
   }
 }
 
+/** Remplacement complet du catalogue produits + thèmes (résynchro — sans marquer sale). */
+export function remplacerCatalogue(products: Product[], themes: Record<string, ProductTheme>): void {
+  etat.produits.clear();
+  etat.themes.clear();
+  for (const p of products) etat.produits.set(p.id, cloner(p));
+  for (const [id, t] of Object.entries(themes)) etat.themes.set(id, cloner(t));
+  const featured = products.find((p) => p.isFeatured);
+  etat.featuredId = featured ? featured.id : null;
+}
+
+/** Remplacement des paramètres boutique (résynchro — sans marquer sale). */
+export function remplacerParametres(settings: ShopSettings): void {
+  etat.parametres = cloner(settings);
+}
+
 /** Remplacement complet des commandes (résynchro depuis Supabase — sans marquer sale). */
 export function remplacerCommandes(orders: Order[]): void {
   etat.commandes.clear();

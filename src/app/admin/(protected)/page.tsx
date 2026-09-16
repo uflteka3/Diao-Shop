@@ -1,8 +1,12 @@
 import Link from 'next/link';
 import { getProduits, getFeaturedId, getProduit, getCommandes } from '@/lib/admin/store';
+import { rafraichirCatalogue, rafraichirCommandes } from '@/lib/server/commandesDirectes';
+
+export const dynamic = 'force-dynamic';
 import StatutBadge from '@/components/admin/StatutBadge';
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  await Promise.all([rafraichirCatalogue(), rafraichirCommandes()]);
   const produits = getProduits();
   const publies = produits.filter((p) => p.published);
   const brouillons = produits.filter((p) => !p.published);

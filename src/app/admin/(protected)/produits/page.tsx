@@ -1,9 +1,11 @@
 import ProductsAdmin from '@/components/admin/ProductsAdmin';
 import { getProduits } from '@/lib/admin/store';
+import { rafraichirCatalogue } from '@/lib/server/commandesDirectes';
 
 export const dynamic = 'force-dynamic';
 
-export default function AdminProduitsPage() {
+export default async function AdminProduitsPage() {
+  await rafraichirCatalogue(); // reflète la vraie base (autres instances serverless)
   return (
     <div>
       <h1 className="title-tight text-2xl font-extrabold sm:text-3xl">Produits</h1>

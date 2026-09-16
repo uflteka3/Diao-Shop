@@ -1,9 +1,11 @@
 import SettingsForm from '@/components/admin/SettingsForm';
 import { getParametres } from '@/lib/admin/store';
+import { rafraichirParametres } from '@/lib/server/commandesDirectes';
 
 export const dynamic = 'force-dynamic';
 
-export default function AdminParametresPage() {
+export default async function AdminParametresPage() {
+  await rafraichirParametres();
   return (
     <div>
       <h1 className="title-tight text-2xl font-extrabold sm:text-3xl">Paramètres</h1>

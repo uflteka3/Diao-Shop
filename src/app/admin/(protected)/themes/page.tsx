@@ -1,10 +1,12 @@
 import { Suspense } from 'react';
 import ThemeEditor from '@/components/admin/ThemeEditor';
 import { getProduits } from '@/lib/admin/store';
+import { rafraichirCatalogue } from '@/lib/server/commandesDirectes';
 
 export const dynamic = 'force-dynamic';
 
-export default function AdminThemesPage() {
+export default async function AdminThemesPage() {
+  await rafraichirCatalogue();
   return (
     <div>
       <h1 className="title-tight text-2xl font-extrabold sm:text-3xl">Thèmes</h1>
