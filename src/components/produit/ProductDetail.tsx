@@ -121,15 +121,33 @@ export default function ProductDetail({ product }: Props) {
         {/* ----- Galerie ----- */}
         <div>
           <div className="relative aspect-square overflow-hidden rounded-panel border" style={{ borderColor: 'var(--ds-border)' }}>
-            <Image
-              key={imageIdx}
-              src={images[imageIdx]}
-              alt={product.altText}
-              fill
-              sizes="(max-width: 1024px) 92vw, 520px"
-              priority
-              className="object-contain p-4"
-            />
+            {images[imageIdx].startsWith('/images/produits/') ? (
+              /* PHOTO RÉELLE : affichée telle quelle, ratio d'origine, cadre arrondi — zéro recadrage. */
+              <div className="flex h-full w-full items-center justify-center p-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  key={imageIdx}
+                  src={images[imageIdx]}
+                  alt={product.altText}
+                  className="max-h-full w-auto max-w-full rounded-thumb border"
+                  style={{
+                    borderColor: 'var(--ds-border)',
+                    boxShadow:
+                      '0 22px 48px -18px rgba(0, 0, 0, 0.6), 0 0 44px -14px color-mix(in srgb, var(--ds-glow) 38%, transparent)',
+                  }}
+                />
+              </div>
+            ) : (
+              <Image
+                key={imageIdx}
+                src={images[imageIdx]}
+                alt={product.altText}
+                fill
+                sizes="(max-width: 1024px) 92vw, 520px"
+                priority
+                className="object-contain p-4"
+              />
+            )}
           </div>
           {images.length > 1 && (
             <div className="mt-3 flex gap-2.5">
