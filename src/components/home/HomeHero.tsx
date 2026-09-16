@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import type { Product, ProductTheme, ShopSettings } from '@/lib/data/types';
 import { FALLBACK_THEME } from '@/lib/data/seed/themes';
@@ -46,7 +46,7 @@ const CONFIANCE = [
  */
 export default function HomeHero({ products, initialFeaturedId, settings, themes }: Props) {
   const reduce = useReducedMotion();
-  const { addItem } = useCart();
+  const { addItem, removeItem, hasItem } = useCart();
   const { has: hasFav, toggle: toggleFav } = useFavorites();
 
   const [featuredId, setFeaturedId] = useState<string | null>(initialFeaturedId);
@@ -54,6 +54,43 @@ export default function HomeHero({ products, initialFeaturedId, settings, themes
   const [sizeHint, setSizeHint] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Performance mobile : le bandeau défilant est mis en pause quand il est
+  // hors écran ou pendant un défilement — aucune animation inutile.
+  const marqueeRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = marqueeRef.current;
+    if (!el) return;
+    let visible = false;
+    let enDefilement = false;
+    let minuteur: ReturnType<typeof setTimeout> | null = null;
+    function maj() {
+      el!.classList.toggle('ds-marquee-pause', !visible || enDefilement);
+    }
+    const observateur = new IntersectionObserver(
+      (entrees) => {
+        visible = entrees[0]?.isIntersecting ?? false;
+        maj();
+      },
+      { rootMargin: '80px' }
+    );
+    observateur.observe(el);
+    const onScroll = () => {
+      enDefilement = true;
+      maj();
+      if (minuteur) clearTimeout(minuteur);
+      minuteur = setTimeout(() => {
+        enDefilement = false;
+        maj();
+      }, 300);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      observateur.disconnect();
+      window.removeEventListener('scroll', onScroll);
+      if (minuteur) clearTimeout(minuteur);
+    };
+  }, []);
 
   const idx = products.findIndex((p) => p.id === featuredId);
   const product = idx >= 0 ? products[idx] : null;
@@ -66,6 +103,8 @@ export default function HomeHero({ products, initialFeaturedId, settings, themes
   const totalStock = taillesActives.reduce((s, x) => s + x.stock, 0);
   const enStock = totalStock > 0;
   const favActif = product ? hasFav(product.id) : false;
+  // Bouton dynamique : état « déjà dans le panier » pour la taille affichée.
+  const dansPanier = Boolean(product && selectedSize && hasItem(product.id, selectedSize));
 
   function goTo(id: string) {
     if (id === featuredId) return;
@@ -92,6 +131,14 @@ export default function HomeHero({ products, initialFeaturedId, settings, themes
     }
     const sizeInfo = product.sizes.find((s) => s.size === selectedSize);
     if (!sizeInfo || sizeInfo.stock <= 0) return;
+    // Bascule : un nouvel appui retire la sélection du panier.
+    if (hasItem(product.id, selectedSize)) {
+      removeItem(product.id, selectedSize);
+      setToast(`${product.name} (taille ${selectedSize}) ${fr.home.produitRetire}`);
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+      toastTimer.current = setTimeout(() => setToast(null), 2800);
+      return;
+    }
     addItem(
       {
         productId: product.id,
@@ -186,12 +233,23 @@ export default function HomeHero({ products, initialFeaturedId, settings, themes
                   type="button"
                   onClick={handleAdd}
                   disabled={!product || !enStock}
-                  className="cta-shadow focus-ring group inline-flex h-14 items-center gap-3 rounded-pill px-7 text-[15px] font-bold transition-transform hover:-translate-y-px active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-45"
-                  style={{ backgroundColor: 'var(--ds-button)', color: 'var(--ds-button-text)' }}
+                  aria-pressed={dansPanier}
+                  className={`${dansPanier ? 'focus-ring' : 'cta-shadow focus-ring'} group inline-flex h-14 items-center gap-3 rounded-pill px-7 text-[15px] font-bold transition-all hover:-translate-y-px active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-45`}
+                  style={
+                    dansPanier
+                      ? { border: '1.5px solid color-mix(in srgb, var(--ds-danger) 60%, transparent)', color: 'var(--ds-text)' }
+                      : { backgroundColor: 'var(--ds-button)', color: 'var(--ds-button-text)' }
+                  }
                 >
-                  <CartIcon className="h-5 w-5" />
-                  {product && enStock ? fr.home.ajouterPanier : fr.home.epuise}
-                  <ArrowRightIcon className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+                  {dansPanier ? (
+                    <span aria-hidden className="inline-flex" style={{ color: 'var(--ds-danger)' }}>
+                      <CheckIcon className="h-5 w-5" />
+                    </span>
+                  ) : (
+                    <CartIcon className="h-5 w-5" />
+                  )}
+                  {product && enStock ? (dansPanier ? fr.home.retirerPanier : fr.home.ajouterPanier) : fr.home.epuise}
+                  {!dansPanier && <ArrowRightIcon className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />}
                 </button>
                 {product && (
                   <button
@@ -396,7 +454,7 @@ export default function HomeHero({ products, initialFeaturedId, settings, themes
       </div>
 
       {/* Bandeau défilant — messages clés de la boutique (factualité : slogan + services configurés) */}
-      <div className="ds-marquee relative mt-2 border-y py-3" style={{ borderColor: 'var(--ds-border)' }} aria-hidden="true">
+      <div ref={marqueeRef} className="ds-marquee relative mt-2 border-y py-3" style={{ borderColor: 'var(--ds-border)' }} aria-hidden="true">
         <div className="ds-marquee-piste">
           {[0, 1].map((copie) => (
             <ul key={copie} className="flex flex-none items-center" aria-hidden={copie === 1}>

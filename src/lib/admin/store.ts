@@ -139,6 +139,14 @@ export function changerStatut(numero: string, statut: Order['status']): boolean 
   return true;
 }
 
+/** Suppression d'une commande (back-office) — persistée par le driver actif. */
+export function supprimerCommande(numero: string): boolean {
+  if (!etat.commandes.has(numero)) return false;
+  etat.commandes.delete(numero);
+  marquerSale('orders', numero);
+  return true;
+}
+
 /** Décrément de stock appliqué par la commande — persisté par ligne produit. */
 export function decrementerStock(productId: string, taille: string, quantite: number): void {
   const p = etat.produits.get(productId);

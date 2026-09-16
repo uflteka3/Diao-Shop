@@ -34,6 +34,17 @@ export default function ProductsAdmin({ produits }: { produits: Product[] }) {
     router.refresh();
   }
 
+  async function dupliquer(p: Product) {
+    setOccupe(p.id);
+    await fetch('/api/admin/products/dupliquer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: p.id }),
+    });
+    setOccupe(null);
+    router.refresh();
+  }
+
   async function supprimer(p: Product) {
     if (!window.confirm(`Supprimer définitivement « ${p.name} » ? Cette action est irréversible.`)) return;
     setOccupe(p.id);
@@ -119,6 +130,14 @@ export default function ProductsAdmin({ produits }: { produits: Product[] }) {
                 <Link href={`/admin/produits/${p.id}`} className="focus-ring rounded-input border border-[#262B38] px-3 py-2 text-[12.5px] font-semibold hover:bg-[#1B1F2B]">
                   Modifier
                 </Link>
+                <button
+                  type="button"
+                  onClick={() => dupliquer(p)}
+                  disabled={occupe === p.id}
+                  className="focus-ring rounded-input border border-[#262B38] px-3 py-2 text-[12.5px] font-semibold hover:bg-[#1B1F2B]"
+                >
+                  Dupliquer
+                </button>
                 <button
                   type="button"
                   onClick={() => supprimer(p)}

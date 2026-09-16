@@ -46,6 +46,7 @@ interface CartContextValue {
   count: number;
   subtotal: number;
   hydrated: boolean;
+  hasItem: (productId: string, size: string) => boolean;
   addItem: (item: CartItem, maxQty?: number) => void;
   removeItem: (productId: string, size: string) => void;
   updateQty: (productId: string, size: string, quantity: number) => void;
@@ -90,6 +91,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     []
   );
   const clear = useCallback(() => dispatch({ type: 'CLEAR' }), []);
+  const hasItem = useCallback(
+    (productId: string, size: string) => items.some((x) => x.productId === productId && x.size === size),
+    [items]
+  );
 
   const value = useMemo<CartContextValue>(
     () => ({
@@ -97,6 +102,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       count: items.reduce((s, i) => s + i.quantity, 0),
       subtotal: items.reduce((s, i) => s + i.quantity * i.unitPrice, 0),
       hydrated,
+      hasItem,
       addItem,
       removeItem,
       updateQty,

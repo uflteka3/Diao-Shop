@@ -35,6 +35,8 @@ commandes. Chaque carte renvoie vers la section concernée.
   5 Mo max), description, **tailles & stocks** (libellés libres — S, M, L, XL… ou tailles
   chiffrées), puis **Publier** ;
 - **Dépublier** masque le maillot de la boutique sans le supprimer (brouillon) ;
+- **Dupliquer** crée une copie en brouillon « (copie) » — mêmes photos, prix, tailles et
+  thème. Idéal pour décliner un modèle : modifiez la copie, puis publiez-la ;
 - **Supprimer** efface définitivement (confirmation demandée) — ses tailles, images et
   thème partent avec lui ;
 - Les changements sont **visibles immédiatement** sur la boutique après enregistrement ;
@@ -64,6 +66,7 @@ change automatiquement quand il est affiché.
 Chaque commande (numéro `DS-XXXXXX`) se déplie : client, adresse, zone, articles, total.
 Le menu **Statut** la fait évoluer : Nouvelle → Confirmée → En préparation → Expédiée →
 Livrée (ou Annulée / Remboursée). Filtrez par statut en haut de page.
+Le bouton **Supprimer** efface définitivement la commande (confirmation demandée).
 Les stocks sont **décrémentés automatiquement** à la commande.
 
 ## 7. Messages

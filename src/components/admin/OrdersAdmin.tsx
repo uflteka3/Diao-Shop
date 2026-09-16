@@ -42,6 +42,18 @@ export default function OrdersAdmin({ commandes }: { commandes: Order[] }) {
     router.refresh();
   }
 
+  async function supprimer(numero: string) {
+    if (!window.confirm(`Supprimer définitivement la commande ${numero} ? Cette action est irréversible.`)) return;
+    setOccupe(numero);
+    await fetch('/api/admin/orders', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ numero }),
+    });
+    setOccupe(null);
+    router.refresh();
+  }
+
   if (commandes.length === 0) {
     return (
       <p className="rounded-panel border border-dashed border-[#262B38] p-8 text-center text-sm text-[#9AA1B2]">
@@ -103,6 +115,15 @@ export default function OrdersAdmin({ commandes }: { commandes: Order[] }) {
                   ))}
                 </select>
               </label>
+              <button
+                type="button"
+                onClick={() => supprimer(o.orderNumber)}
+                disabled={occupe === o.orderNumber}
+                aria-label={`Supprimer la commande ${o.orderNumber}`}
+                className="focus-ring h-10 rounded-input border border-[#3A1E1E] px-3 text-[12.5px] font-semibold text-[#FF5C5C] hover:bg-[#1B1F2B]"
+              >
+                Supprimer
+              </button>
             </div>
             {ouvertes.has(o.orderNumber) && (
               <div className="border-t border-[#262B38] p-4 text-sm">

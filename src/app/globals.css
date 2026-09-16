@@ -186,6 +186,7 @@ button.rounded-pill.focus-ring:focus-visible {
 .ds-reveal-visible {
   opacity: 1;
   transform: none;
+  will-change: auto;
 }
 
 /* Bandeau défilant (marquee) — pause au survol */
@@ -197,6 +198,10 @@ button.rounded-pill.focus-ring:focus-visible {
   display: flex;
   width: max-content;
   animation: ds-marquee 28s linear infinite;
+  will-change: transform;
+}
+.ds-marquee.ds-marquee-pause .ds-marquee-piste {
+  animation-play-state: paused;
 }
 .ds-marquee:hover .ds-marquee-piste {
   animation-play-state: paused;
@@ -206,7 +211,9 @@ button.rounded-pill.focus-ring:focus-visible {
   to { transform: translateX(-50%); }
 }
 
-/* Grain photographique très léger — profondeur de matière */
+/* Grain photographique très léger — profondeur de matière.
+   Grand écran uniquement : les calques fixes sont coûteux sur mobile. */
+@media (min-width: 1024px) {
 .ds-grain::before {
   content: '';
   position: fixed;
@@ -215,6 +222,7 @@ button.rounded-pill.focus-ring:focus-visible {
   pointer-events: none;
   opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
 }
 
 /* Reflet balayant les boutons principaux au survol */

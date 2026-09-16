@@ -9,7 +9,7 @@ import { formatPrix } from '@/lib/utils/format';
 import { fr } from '@/lib/i18n/fr';
 import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
-import { ArrowRightIcon } from '@/components/Icons';
+import { ArrowRightIcon, CheckIcon } from '@/components/Icons';
 
 interface Props {
   product: Product;
@@ -21,7 +21,7 @@ interface Props {
  * favoris (contexte global persistant).
  */
 export default function ProductDetail({ product }: Props) {
-  const { addItem } = useCart();
+  const { addItem, removeItem, hasItem } = useCart();
   const { has: hasFav, toggle: toggleFav } = useFavorites();
   const router = useRouter();
 
@@ -37,6 +37,8 @@ export default function ProductDetail({ product }: Props) {
   const stockTaille = tailleChoisie?.stock ?? 0;
   const totalStock = taillesActives.reduce((s, x) => s + x.stock, 0);
   const favActif = hasFav(product.id);
+  // Bouton dynamique : l'état reflète le panier (taille sélectionnée).
+  const dansPanier = selectedSize ? hasItem(product.id, selectedSize) : false;
 
   function handleAdd() {
     if (!selectedSize) {
@@ -44,6 +46,13 @@ export default function ProductDetail({ product }: Props) {
       return;
     }
     if (!tailleChoisie || tailleChoisie.stock <= 0) return;
+    // Bascule : si la sélection est déjà dans le panier, un nouvel appui la retire.
+    if (hasItem(product.id, selectedSize)) {
+      removeItem(product.id, selectedSize);
+      setToast(`${product.name} (taille ${selectedSize}) ${fr.home.produitRetire}`);
+      setTimeout(() => setToast(null), 2800);
+      return;
+    }
     addItem(
       {
         productId: product.id,
@@ -255,10 +264,20 @@ export default function ProductDetail({ product }: Props) {
               type="button"
               onClick={handleAdd}
               disabled={totalStock === 0}
-              className="cta-shadow focus-ring inline-flex h-14 items-center gap-3 rounded-pill px-7 text-[15px] font-bold transition-transform hover:-translate-y-px active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-45"
-              style={{ backgroundColor: 'var(--ds-button)', color: 'var(--ds-button-text)' }}
+              aria-pressed={dansPanier}
+              className={`${dansPanier ? 'focus-ring' : 'cta-shadow focus-ring'} inline-flex h-14 items-center gap-3 rounded-pill px-7 text-[15px] font-bold transition-all hover:-translate-y-px active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-45`}
+              style={
+                dansPanier
+                  ? { border: '1.5px solid color-mix(in srgb, var(--ds-danger) 60%, transparent)', color: 'var(--ds-text)' }
+                  : { backgroundColor: 'var(--ds-button)', color: 'var(--ds-button-text)' }
+              }
             >
-              {totalStock === 0 ? fr.home.epuise : fr.home.ajouterPanier}
+              {dansPanier && (
+                <span aria-hidden className="inline-flex" style={{ color: 'var(--ds-danger)' }}>
+                  <CheckIcon className="h-4 w-4" />
+                </span>
+              )}
+              {totalStock === 0 ? fr.home.epuise : dansPanier ? fr.home.retirerPanier : fr.home.ajouterPanier}
             </button>
             {totalStock > 0 && (
               <button

@@ -22,11 +22,11 @@ export default function FavorisPage() {
   return (
     <div
       style={{ ...themeToCssVars(FALLBACK_THEME), backgroundColor: 'var(--ds-bg)' }}
-      className="ds-anim min-h-screen overflow-x-clip"
+      className="ds-anim relative min-h-screen overflow-x-clip"
     >
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 opacity-70"
+        className="pointer-events-none absolute inset-0 opacity-70"
         style={{
           background:
             'radial-gradient(80% 50% at 50% 0%, color-mix(in srgb, var(--ds-glow) 18%, transparent), transparent 70%)',

@@ -74,12 +74,12 @@ export default function ProduitPage({ params }: Props) {
     <div
       style={{ ...vars, backgroundColor: 'var(--ds-bg)' }}
       data-mode={theme.mode}
-      className="ds-anim min-h-screen overflow-x-clip"
+      className="ds-anim relative min-h-screen overflow-x-clip"
     >
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 opacity-70"
+        className="pointer-events-none absolute inset-0 opacity-70"
         style={{
           background:
             'radial-gradient(80% 55% at 50% 0%, color-mix(in srgb, var(--ds-glow) 22%, transparent), transparent 72%)',

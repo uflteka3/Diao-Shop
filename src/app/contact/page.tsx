@@ -41,11 +41,11 @@ export default function ContactPage() {
   return (
     <div
       style={{ ...vars, backgroundColor: 'var(--ds-bg)' }}
-      className="ds-anim ds-grain min-h-screen overflow-x-clip"
+      className="ds-anim relative ds-grain min-h-screen overflow-x-clip"
     >
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 opacity-80"
+        className="pointer-events-none absolute inset-0 opacity-80"
         style={{
           background:
             'radial-gradient(85% 55% at 50% 0%, color-mix(in srgb, var(--ds-glow) 22%, transparent), transparent 72%)',

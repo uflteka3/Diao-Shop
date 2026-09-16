@@ -304,6 +304,20 @@ async function persisterCommandes(sb: SupabaseClient, snapshot: Snapshot, numero
       if (errItems) throw errItems;
     }
   }
+  // Suppressions : numéros marqués « sales » mais absents du snapshot.
+  for (const numero of numeros) {
+    if (snapshot.orders.some((o) => o.orderNumber === numero)) continue;
+    let id = orderIds.get(numero);
+    if (!id) {
+      const { data } = await sb.from('orders').select('id').eq('order_number', numero).maybeSingle();
+      if (typeof data?.id === 'string') id = data.id;
+    }
+    if (id) {
+      await sb.from('order_items').delete().eq('order_id', id);
+      await sb.from('orders').delete().eq('id', id);
+      orderIds.delete(numero);
+    }
+  }
 }
 
 async function persisterParametres(sb: SupabaseClient, snapshot: Snapshot): Promise<void> {

@@ -24,6 +24,8 @@ export const fr = {
     ajouterPanier: 'Ajouter au panier',
     tailleObligatoire: 'Choisissez d’abord une taille',
     produitAjoute: 'ajouté au panier',
+    produitRetire: 'retiré du panier',
+    retirerPanier: 'Retirer du panier',
     produitPrecedent: 'Maillot précédent',
     produitSuivant: 'Maillot suivant',
     choisirMaillot: 'Choisir le maillot affiché',
